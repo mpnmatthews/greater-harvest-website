@@ -1,117 +1,190 @@
-<!-- Include Supabase JS Client (Using standard CDN if not already present) -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Greater Harvest AME Zion Church</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="bg-gray-50 text-gray-900 font-sans antialiased">
 
-<script>
-  // 1. Initialize Supabase
-  const SUPABASE_URL = "https://amkfdqsrtawqjyryhjqn.supabase.co";
-  const SUPABASE_ANON_KEY = "YOUR_PUBLIC_ANON_KEY_HERE"; // Replace with your actual anon key
-  const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    <header class="bg-blue-900 text-white p-4 shadow-md flex justify-between items-center">
+        <div class="font-bold text-xl tracking-wide">Greater Harvest AME Zion</div>
+        <div class="flex items-center gap-4">
+            <button id="pastor-view-btn" class="bg-amber-400 text-blue-950 font-bold px-4 py-2 rounded shadow hover:bg-amber-300 transition-all" style="display: none;">
+                🌟 Pastor View Enabled
+            </button>
+            <button id="logout-nav-btn" onclick="handleSignOut()" class="border border-white/40 px-3 py-1.5 rounded hover:bg-white/10 text-sm transition-all" style="display: none;">
+                Sign Out
+            </button>
+        </div>
+    </header>
 
-  // 2. Global state for the authenticated user
-  let currentUser = null;
-  let currentUserRole = 'guest';
+    <main class="max-w-4xl mx-auto my-8 px-4">
 
-  // 3. Centralized Client-Side Router
-  function routeToPage(role) {
-    console.log(`Routing to view container for role: [${role}]`);
-    
-    // Hide all view panels first
-    const sections = ['home-page', 'pastor-dashboard', 'sanctuary-portal', 'vineyard-portal', 'pending-page'];
-    sections.forEach(id => {
-      const el = document.getElementById(id);
-      if (el) el.style.display = 'none';
-    });
+        <div id="home-page" class="view-panel space-y-6 text-center py-12">
+            <h1 class="text-4xl font-extrabold text-blue-900">Welcome to Greater Harvest</h1>
+            <p class="text-gray-600 max-w-md mx-auto">Welcome to our church community hub in Wilson, NC. Sign in to enter your member portal.</p>
+            
+            <div class="bg-white p-6 rounded-xl shadow-md border border-gray-100 max-w-sm mx-auto text-left mt-8">
+                <h3 class="text-lg font-bold mb-4 text-gray-800">Account Sign In</h3>
+                <form onsubmit="event.preventDefault(); handleSignIn();" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-gray-500 mb-1">Email Address</label>
+                        <input id="login-email" type="email" required class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-blue-500" placeholder="pastor@example.com">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold uppercase text-gray-500 mb-1">Password</label>
+                        <input id="login-password" type="password" required class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-blue-500" placeholder="••••••••">
+                    </div>
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded text-sm transition-colors">
+                        Sign In
+                    </button>
+                </form>
+            </div>
+        </div>
 
-    // Toggle the Gold Pastor View Button in the header if it exists
-    const pastorBtn = document.getElementById('pastor-view-btn');
-    if (pastorBtn) {
-      pastorBtn.style.display = (role === 'pastor') ? 'block' : 'none';
-    }
+        <div id="pastor-dashboard" class="view-panel bg-white p-8 rounded-xl shadow-md border-t-4 border-amber-400" style="display: none;">
+            <div class="border-b pb-4 mb-4">
+                <span class="text-xs uppercase tracking-wider font-extrabold px-2.5 py-1 bg-amber-100 text-amber-800 rounded-full">Administrative Portal</span>
+                <h1 class="text-3xl font-black text-gray-900 mt-2">Pastor Dashboard</h1>
+            </div>
+            <p class="text-gray-600 mb-6">Welcome back, Pastor. Here you can oversee local church ministries, review updates, and manage roles.</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="border p-4 rounded bg-gray-50"><h3 class="font-bold text-blue-900">Local Sanctuary Roster</h3><p class="text-xs text-gray-500">Manage church members assigned to Wilson, NC.</p></div>
+                <div class="border p-4 rounded bg-gray-50"><h3 class="font-bold text-blue-900">Vineyard Analytics</h3><p class="text-xs text-gray-500">Review system activity records for online users.</p></div>
+            </div>
+        </div>
 
-    // Display the targeted container based on role mapping
-    switch (role) {
-      case 'pastor':
-        showElement('pastor-dashboard');
-        break;
-      case 'local_member':
-        showElement('sanctuary-portal');
-        break;
-      case 'online_member':
-        showElement('vineyard-portal');
-        break;
-      case 'guest':
-      default:
-        showElement('pending-page');
-        break;
-    }
-  }
+        <div id="sanctuary-portal" class="view-panel bg-white p-8 rounded-xl shadow-md border-t-4 border-blue-600" style="display: none;">
+            <h1 class="text-2xl font-bold text-blue-900 mb-2">Sanctuary Member Portal</h1>
+            <p class="text-gray-600">Exclusive view containing community notifications, events, and resources for our localized physical congregation in Wilson.</p>
+        </div>
 
-  function showElement(id) {
-    const el = document.getElementById(id);
-    if (el) el.style.display = 'block';
-    else console.warn(`Element with id #${id} was not found in the HTML.`);
-  }
+        <div id="vineyard-portal" class="view-panel bg-white p-8 rounded-xl shadow-md border-t-4 border-emerald-600" style="display: none;">
+            <h1 class="text-2xl font-bold text-emerald-900 mb-2">The Vineyard Online Portal</h1>
+            <p class="text-gray-600">Streaming archives, digital fellowship rooms, and tailored global updates for our remote internet campus members.</p>
+        </div>
 
-  // 4. Secure Profile Fetching (Handles RLS authentication window)
-  async function fetchUserRole(userId) {
-    try {
-      console.log("Fetching profile for UUID:", userId);
-      
-      const { data: profile, error } = await supabase
-        .from('profiles')
-        .select('user_role')
-        .eq('id', userId)
-        .single();
+        <div id="pending-page" class="view-panel bg-amber-50 border border-amber-200 p-8 rounded-xl text-center max-w-md mx-auto" style="display: none;">
+            <div class="text-4xl mb-2">⏳</div>
+            <h1 class="text-xl font-bold text-amber-900">Profile Verification Pending</h1>
+            <p class="text-sm text-amber-700 mt-2">Your registration was received successfully. An administrator is verifying your account assignment. You'll be granted automatic entry once your membership role is assigned.</p>
+        </div>
 
-      if (error) {
-        // If RLS blocks it, or if it doesn't exist yet, it falls through to guest
-        console.error("Database read error (Possible RLS blockage):", error.message);
-        return 'guest';
-      }
+    </main>
 
-      if (profile && profile.user_role) {
-        return profile.user_role;
-      }
-      
-      return 'guest';
-    } catch (err) {
-      console.error("Unexpected error fetching profile:", err);
-      return 'guest';
-    }
-  }
+    <script>
+        // 1. Database Infrastructure Setup
+        const SUPABASE_URL = "https://amkfdqsrtawqjyryhjqn.supabase.co";
+        const SUPABASE_ANON_KEY = "sb_publishable_SnnvEXHJarBR1JgH5ObIpg_12x921vc"; 
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  // 5. The Core Fix: Reactive Auth Listener
-  // This fires automatically on load, on sign-in, and on sign-out.
-  supabase.auth.onAuthStateChange(async (event, session) => {
-    console.log(`Supabase Auth Event Triggered: [${event}]`);
+        // 2. Client Side Multi-Pass Dynamic Router
+        function routeToPage(role, isAuthenticated) {
+            console.log(`Executing UI routing adjustment for role: [${role}]`);
+            
+            // Hide all components uniformly
+            const sections = document.querySelectorAll('.view-panel');
+            sections.forEach(panel => panel.style.display = 'none');
 
-    if (session && session.user) {
-      currentUser = session.user;
-      // Session token is now active; safe to bypass profiles RLS policy
-      currentUserRole = await fetchUserRole(session.user.id);
-      console.log(`Identity verified. Assigned role: ${currentUserRole}`);
-      routeToPage(currentUserRole);
-    } else {
-      // No active session found or user logged out
-      currentUser = null;
-      currentUserRole = 'guest';
-      console.log("No authenticated user found. Fallback to public Home.");
-      routeToPage('guest'); 
-      // Note: Swap to showing a public 'home-page' element here if unauthenticated guests shouldn't see the Pending screen immediately.
-    }
-  });
+            // Toggle top navigation utility panels
+            const pastorBtn = document.getElementById('pastor-view-btn');
+            const logoutBtn = document.getElementById('logout-nav-btn');
+            
+            if (pastorBtn) pastorBtn.style.display = (role === 'pastor') ? 'block' : 'none';
+            if (logoutBtn) logoutBtn.style.display = isAuthenticated ? 'block' : 'none';
 
-  // 6. Form Submission Handlers (Bind these to your actual HTML elements)
-  async function handleSignIn(email, password) {
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) {
-      alert(`Login Failed: ${error.message}`);
-    }
-    // No routing needed here! onAuthStateChange captures the successful event automatically.
-  }
+            // Unauthenticated users are strictly bound to Home
+            if (!isAuthenticated) {
+                showElement('home-page');
+                return;
+            }
 
-  async function handleSignOut() {
-    const { error } = await supabase.auth.signOut();
-    if (error) console.error("Logout Error:", error.message);
-  }
-</script>
+            // Role mapping switch
+            switch (role) {
+                case 'pastor':
+                    showElement('pastor-dashboard');
+                    break;
+                case 'local_member':
+                    showElement('sanctuary-portal');
+                    break;
+                case 'online_member':
+                    showElement('vineyard-portal');
+                    break;
+                case 'guest':
+                default:
+                    showElement('pending-page');
+                    break;
+            }
+        }
+
+        function showElement(id) {
+            const el = document.getElementById(id);
+            if (el) el.style.display = 'block';
+        }
+
+        // 3. Secured Async Identity Resolver (Clears JWT/RLS Cache Window)
+        async function fetchUserRole(userId) {
+            try {
+                console.log("Requesting role verification for UUID token:", userId);
+                
+                const { data: profile, error } = await supabase
+                    .from('profiles')
+                    .select('user_role')
+                    .eq('id', userId)
+                    .single();
+
+                if (error) {
+                    console.error("Database resolution failed. Profile lookup fallback applied:", error.message);
+                    return 'guest';
+                }
+
+                if (profile && profile.user_role) {
+                    return profile.user_role;
+                }
+                
+                return 'guest';
+            } catch (err) {
+                console.error("System structural routing conflict caught:", err);
+                return 'guest';
+            }
+        }
+
+        // 4. Reactive State Change Gateway (Core fix for the pastor's login loop)
+        supabase.auth.onAuthStateChange(async (event, session) => {
+            console.log(`Global Authenticator Broadcast Event: [${event}]`);
+
+            if (session && session.user) {
+                // Network pipeline has completed binding user JWT headers
+                const dynamicRole = await fetchUserRole(session.user.id);
+                console.log(`Identity verification successful. System assigned role matching database: ${dynamicRole}`);
+                routeToPage(dynamicRole, true);
+            } else {
+                // Explicit initialization fallback for unauthenticated connections
+                console.log("No authenticated credentials detected. Resetting to public home.");
+                routeToPage('guest', false);
+            }
+        });
+
+        // 5. Trigger Actions
+        async function handleSignIn() {
+            const emailInput = document.getElementById('login-email').value;
+            const passwordInput = document.getElementById('login-password').value;
+
+            console.log("Processing sign-in request...");
+            const { error } = await supabase.auth.signInWithPassword({
+                email: emailInput,
+                password: passwordInput
+            });
+
+            if (error) {
+                alert(`Authentication Exception: ${error.message}`);
+            }
+            // Logic avoids manually routing here; the reactive onAuthStateChange handler performs the layout shift automatically
+        }
+
+        async function handleSignOut() {
+            console.log("Processing account sign out...");
+            const { error } = await supabase.auth
