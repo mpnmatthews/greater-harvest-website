@@ -1,641 +1,117 @@
-bash
-
-cat /home/claude/greater-harvest/index.html
-Output
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Greater Harvest AME Zion Church — Wilson, NC</title>
+<!-- Include Supabase JS Client (Using standard CDN if not already present) -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  :root {
-    --gold: #C9A84C; --gold-light: #F0D080;
-    --scarlet: #8B1A1A; --deep-red: #6B0F0F;
-    --cream: #FAF7F0; --charcoal: #1A1A1A; --muted: #5A5A5A;
-    --season-bg: #152040; --season-accent: #1e3a6e;
-    --season-highlight: #4a7abf; --season-soft: #c8d8f0;
-    --season-glow: rgba(74,122,191,0.15);
-  }
-  html { scroll-behavior: smooth; }
-  body { font-family: Georgia,'Times New Roman',serif; background: var(--cream); color: var(--charcoal); line-height: 1.6; }
-  .page { display: none; }
-  .page.active { display: block; }
-
-  /* NOTIF BANNER */
-  #notif-banner { display:none; background:#7a3c00; color:#fce8d0; text-align:center; padding:10px 1rem; font-size:13px; font-family:sans-serif; border-bottom:2px solid var(--gold); }
-  #notif-banner.show { display:block; }
-
-  /* HEADER */
-  header { background:var(--deep-red); border-bottom:3px solid var(--gold); padding:0 1.25rem; position:sticky; top:0; z-index:200; }
-  .header-inner { max-width:1100px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; height:68px; gap:12px; }
-  .logo-area { display:flex; align-items:center; gap:12px; cursor:pointer; flex-shrink:0; }
-  .logo-circle { width:48px; height:48px; background:var(--gold); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0; border:2px solid rgba(255,255,255,0.2); }
-  .church-name .line1 { font-size:13px; color:var(--gold); letter-spacing:0.1em; text-transform:uppercase; line-height:1.1; }
-  .church-name .line2 { font-size:10px; color:rgba(255,255,255,0.55); letter-spacing:0.08em; text-transform:uppercase; font-family:sans-serif; }
-  .header-actions { display:flex; align-items:center; gap:8px; flex-shrink:0; flex-wrap:wrap; justify-content:flex-end; }
-  .btn-outline { padding:7px 16px; border:1.5px solid var(--gold); background:transparent; color:var(--gold); font-size:11px; letter-spacing:0.08em; text-transform:uppercase; font-family:sans-serif; border-radius:3px; cursor:pointer; transition:background 0.2s,color 0.2s; white-space:nowrap; }
-  .btn-outline:hover { background:var(--gold); color:var(--deep-red); }
-  .btn-gold { padding:7px 16px; border:1.5px solid var(--gold); background:var(--gold); color:var(--deep-red); font-size:11px; letter-spacing:0.08em; text-transform:uppercase; font-family:sans-serif; font-weight:700; border-radius:3px; cursor:pointer; transition:background 0.2s; white-space:nowrap; }
-  .btn-gold:hover { background:var(--gold-light); }
-  .btn-danger { padding:7px 16px; border:1.5px solid rgba(255,255,255,0.3); background:transparent; color:rgba(255,255,255,0.7); font-size:11px; letter-spacing:0.08em; text-transform:uppercase; font-family:sans-serif; border-radius:3px; cursor:pointer; white-space:nowrap; }
-  .btn-danger:hover { background:rgba(255,255,255,0.1); }
-  .btn-pastor { padding:7px 16px; border:1.5px solid var(--gold-light); background:rgba(201,168,76,0.15); color:var(--gold-light); font-size:11px; letter-spacing:0.08em; text-transform:uppercase; font-family:sans-serif; border-radius:3px; cursor:pointer; white-space:nowrap; }
-  .btn-pastor:hover { background:rgba(201,168,76,0.3); }
-  #user-greeting { font-size:11px; color:var(--gold-light); font-family:sans-serif; display:none; white-space:nowrap; }
-  .pastor-badge-header { display:inline-block; font-size:9px; background:var(--gold); color:var(--deep-red); font-family:sans-serif; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; padding:2px 7px; border-radius:2px; margin-left:6px; vertical-align:middle; }
-
-  /* SEASON STRIP */
-  .season-strip { background:var(--season-bg); padding:6px 1rem; text-align:center; transition:background 0.8s; }
-  .season-strip p { font-size:11px; color:var(--season-soft); letter-spacing:0.1em; text-transform:uppercase; font-family:sans-serif; }
-  .season-strip .hl { color:var(--season-highlight); font-weight:600; }
-
-  /* HERO */
-  .hero { background:var(--season-bg); padding:2.5rem 1.25rem 0; transition:background 0.8s; position:relative; overflow:hidden; }
-  .hero::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse at 50% 0%,var(--season-glow) 0%,transparent 65%); pointer-events:none; }
-  .hero-inner { max-width:900px; margin:0 auto; position:relative; z-index:1; }
-  .hero-label { text-align:center; margin-bottom:1.25rem; }
-  .hero-label .eyebrow { font-size:11px; color:var(--season-highlight); letter-spacing:0.2em; text-transform:uppercase; font-family:sans-serif; margin-bottom:0.4rem; }
-  .hero-label h1 { font-size:clamp(22px,4vw,36px); color:var(--gold); font-weight:400; line-height:1.25; }
-  .hero-label .verse { font-size:13px; color:var(--season-soft); font-style:italic; margin-top:0.5rem; }
-  .video-wrap { width:100%; aspect-ratio:16/9; background:#0a0a0a; border:2px solid var(--gold); border-bottom:none; border-radius:8px 8px 0 0; overflow:hidden; margin-top:1.5rem; }
-  .video-wrap iframe { width:100%; height:100%; border:none; display:block; }
-  .live-dot { width:8px; height:8px; background:#e24b4a; border-radius:50%; animation:pulse 1.8s infinite; flex-shrink:0; }
-  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.4;transform:scale(0.8);} }
-  .video-chrome { background:var(--deep-red); border:2px solid var(--gold); border-top:none; padding:9px 14px; display:flex; align-items:center; justify-content:space-between; max-width:900px; margin:0 auto; border-radius:0 0 8px 8px; }
-  .chrome-left { display:flex; align-items:center; gap:10px; }
-  .chrome-left p { font-size:11px; color:rgba(255,255,255,0.6); font-family:sans-serif; letter-spacing:0.08em; text-transform:uppercase; }
-  .season-verse-strip { background:var(--season-bg); padding:1.5rem 1.25rem 2rem; transition:background 0.8s; }
-  .season-verse-strip p { text-align:center; font-size:14px; color:var(--season-soft); font-style:italic; max-width:580px; margin:0 auto; padding-top:1.25rem; border-top:1px solid rgba(255,255,255,0.08); }
-
-  /* NAV CARDS */
-  .nav-section { padding:3rem 1.25rem 3.5rem; background:var(--cream); }
-  .nav-section-inner { max-width:900px; margin:0 auto; }
-  .section-eyebrow { text-align:center; margin-bottom:2rem; }
-  .section-eyebrow .tag { font-size:11px; letter-spacing:0.2em; text-transform:uppercase; color:var(--scarlet); font-family:sans-serif; font-weight:600; margin-bottom:0.4rem; }
-  .section-eyebrow h2 { font-size:clamp(20px,3vw,28px); font-weight:400; }
-  .nav-cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:1.5rem; }
-  .nav-card { background:#fff; border-radius:6px; border:1px solid rgba(0,0,0,0.1); overflow:hidden; cursor:pointer; transition:box-shadow 0.25s,transform 0.2s; }
-  .nav-card:hover { box-shadow:0 8px 28px rgba(0,0,0,0.1); transform:translateY(-3px); }
-  .card-top { height:6px; }
-  .card-top.red { background:var(--scarlet); }
-  .card-top.gold { background:var(--gold); }
-  .card-body { padding:1.6rem; }
-  .card-icon-row { display:flex; align-items:center; gap:12px; margin-bottom:1rem; }
-  .card-icon { width:46px; height:46px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:22px; }
-  .card-icon.red { background:rgba(139,26,26,0.08); }
-  .card-icon.gold { background:rgba(201,168,76,0.1); }
-  .card-tag { font-size:10px; letter-spacing:0.14em; text-transform:uppercase; font-family:sans-serif; font-weight:600; padding:3px 10px; border-radius:2px; }
-  .card-tag.red { background:rgba(139,26,26,0.08); color:var(--scarlet); }
-  .card-tag.gold { background:rgba(201,168,76,0.1); color:#7a5d1a; }
-  .card-body h3 { font-size:19px; font-weight:400; color:var(--charcoal); margin-bottom:0.5rem; line-height:1.3; }
-  .card-body p { font-size:13px; color:var(--muted); font-family:sans-serif; line-height:1.65; margin-bottom:1.2rem; }
-  .card-details { border-top:1px solid rgba(0,0,0,0.08); padding-top:0.9rem; display:flex; flex-direction:column; gap:7px; }
-  .detail-row { display:flex; align-items:center; gap:9px; font-size:12px; font-family:sans-serif; color:var(--muted); }
-  .card-cta { margin-top:1.2rem; display:flex; align-items:center; gap:7px; font-size:12px; font-weight:600; letter-spacing:0.06em; text-transform:uppercase; font-family:sans-serif; }
-  .card-cta.red { color:var(--scarlet); }
-  .card-cta.gold { color:#8a6620; }
-  .card-cta .arr { transition:transform 0.2s; }
-  .nav-card:hover .arr { transform:translateX(4px); }
-
-  /* PASTOR DASHBOARD */
-  .pastor-dash { background:var(--charcoal); padding:1rem 1.25rem; border-bottom:2px solid var(--gold); }
-  .pastor-dash-inner { max-width:1100px; margin:0 auto; display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
-  .pastor-dash-label { font-size:11px; color:var(--gold); letter-spacing:0.12em; text-transform:uppercase; font-family:sans-serif; font-weight:600; flex-shrink:0; }
-  .pastor-dash-btn { padding:6px 16px; border:1px solid var(--gold); background:transparent; color:var(--gold); font-size:11px; letter-spacing:0.08em; text-transform:uppercase; font-family:sans-serif; border-radius:3px; cursor:pointer; transition:background 0.2s,color 0.2s; }
-  .pastor-dash-btn:hover, .pastor-dash-btn.active { background:var(--gold); color:var(--charcoal); }
-  .pastor-dash-divider { width:1px; height:20px; background:rgba(201,168,76,0.3); flex-shrink:0; }
-  .pastor-stat { font-size:11px; color:rgba(255,255,255,0.45); font-family:sans-serif; }
-  .pastor-stat span { color:var(--gold-light); font-weight:600; }
-
-  /* AUTH MODAL */
-  .modal-bg { display:none; min-height:100vh; background:rgba(0,0,0,0.55); align-items:center; justify-content:center; padding:1rem; position:fixed; inset:0; z-index:300; }
-  .modal-bg.open { display:flex; }
-  .modal { background:#fff; border-radius:8px; padding:2rem; width:100%; max-width:400px; position:relative; }
-  .modal-close { position:absolute; top:12px; right:14px; background:none; border:none; font-size:22px; cursor:pointer; color:var(--muted); line-height:1; }
-  .modal h2 { font-size:20px; font-weight:400; color:var(--deep-red); margin-bottom:0.3rem; }
-  .modal .sub { font-size:12px; color:var(--muted); font-family:sans-serif; margin-bottom:1.4rem; }
-  .modal label { display:block; font-size:12px; font-family:sans-serif; color:var(--muted); margin-bottom:4px; letter-spacing:0.05em; }
-  .modal input[type=email], .modal input[type=password], .modal input[type=text] { width:100%; padding:10px 12px; border:1px solid rgba(0,0,0,0.2); border-radius:4px; font-size:14px; font-family:sans-serif; margin-bottom:1rem; outline:none; transition:border-color 0.2s; background:#fff; color:var(--charcoal); }
-  .modal input:focus { border-color:var(--scarlet); }
-  .modal-submit { width:100%; padding:11px; background:var(--deep-red); color:var(--gold); border:none; border-radius:4px; font-size:13px; letter-spacing:0.1em; text-transform:uppercase; font-family:sans-serif; font-weight:600; cursor:pointer; transition:background 0.2s; margin-top:0.25rem; }
-  .modal-submit:hover { background:var(--scarlet); }
-  .modal-submit:disabled { opacity:0.6; cursor:not-allowed; }
-  .modal-toggle { text-align:center; margin-top:1rem; font-size:12px; font-family:sans-serif; color:var(--muted); }
-  .modal-toggle a { color:var(--scarlet); cursor:pointer; text-decoration:underline; }
-  .modal-msg { font-size:12px; font-family:sans-serif; padding:8px 12px; border-radius:4px; margin-bottom:1rem; display:none; }
-  .modal-msg.error { background:#fff0f0; color:#8b0000; border:1px solid #f5c0c0; display:block; }
-  .modal-msg.success { background:#f0fff4; color:#1a5c2a; border:1px solid #b0e0bb; display:block; }
-
-  /* PORTALS */
-  .portal-page { min-height:100vh; background:var(--cream); }
-  .portal-hero { padding:3rem 1.25rem 2.5rem; text-align:center; }
-  .portal-hero.sanctuary { background:var(--deep-red); }
-  .portal-hero.vineyard { background:#152040; }
-  .portal-hero.pastor-view { background:linear-gradient(135deg,var(--deep-red) 0%,#152040 100%); }
-  .portal-badge { display:inline-block; font-size:10px; letter-spacing:0.18em; text-transform:uppercase; font-family:sans-serif; font-weight:600; padding:4px 14px; border-radius:2px; margin-bottom:1rem; }
-  .portal-badge.sanctuary { background:rgba(201,168,76,0.2); color:var(--gold); border:1px solid var(--gold); }
-  .portal-badge.vineyard { background:rgba(74,122,191,0.2); color:#a0c0f0; border:1px solid #4a7abf; }
-  .portal-badge.pastor { background:rgba(201,168,76,0.3); color:var(--gold-light); border:1px solid var(--gold-light); }
-  .portal-hero h1 { font-size:clamp(24px,4vw,38px); font-weight:400; color:var(--gold); line-height:1.25; margin-bottom:0.6rem; }
-  .portal-hero .pastor-line { font-size:13px; color:rgba(255,255,255,0.6); font-family:sans-serif; letter-spacing:0.06em; }
-  .portal-content { max-width:900px; margin:0 auto; padding:2.5rem 1.25rem 3rem; }
-  .portal-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:1.25rem; margin-bottom:2rem; }
-  .portal-card { background:#fff; border-radius:6px; border:1px solid rgba(0,0,0,0.1); padding:1.4rem; }
-  .portal-card .pc-icon { font-size:28px; margin-bottom:0.6rem; }
-  .portal-card h3 { font-size:16px; font-weight:400; color:var(--deep-red); margin-bottom:0.4rem; }
-  .portal-card.vineyard h3 { color:#1e3a6e; }
-  .portal-card.pastor-card h3 { color:var(--charcoal); }
-  .portal-card p { font-size:13px; color:var(--muted); font-family:sans-serif; line-height:1.6; }
-  .portal-scripture { background:var(--deep-red); border-radius:6px; padding:1.75rem; text-align:center; margin-bottom:2rem; }
-  .portal-scripture.vineyard { background:#152040; }
-  .portal-scripture.pastor { background:var(--charcoal); border:1px solid var(--gold); }
-  .portal-scripture blockquote { font-size:clamp(15px,2.5vw,18px); color:var(--gold-light); font-style:italic; line-height:1.7; margin-bottom:0.6rem; }
-  .portal-scripture cite { font-size:12px; color:rgba(255,255,255,0.5); font-family:sans-serif; letter-spacing:0.1em; text-transform:uppercase; font-style:normal; }
-
-  /* PASTOR SWITCHER (inside pastor portal) */
-  .pastor-switcher { display:flex; gap:1rem; margin-bottom:2rem; flex-wrap:wrap; }
-  .switcher-btn { flex:1; min-width:200px; padding:1rem 1.25rem; border-radius:6px; border:2px solid transparent; cursor:pointer; text-align:left; background:#fff; transition:border-color 0.2s,box-shadow 0.2s; }
-  .switcher-btn:hover { box-shadow:0 4px 16px rgba(0,0,0,0.1); }
-  .switcher-btn.sanctuary-sw { border-color:var(--scarlet); }
-  .switcher-btn.vineyard-sw  { border-color:#4a7abf; }
-  .switcher-btn .sw-icon { font-size:28px; margin-bottom:6px; }
-  .switcher-btn .sw-title { font-size:15px; font-weight:400; color:var(--charcoal); font-family:Georgia,serif; margin-bottom:3px; }
-  .switcher-btn .sw-sub { font-size:12px; color:var(--muted); font-family:sans-serif; }
-  .switcher-btn .sw-role { font-size:10px; letter-spacing:0.12em; text-transform:uppercase; font-family:sans-serif; font-weight:600; margin-top:8px; }
-  .switcher-btn.sanctuary-sw .sw-role { color:var(--scarlet); }
-  .switcher-btn.vineyard-sw  .sw-role { color:#4a7abf; }
-
-  /* PASTOR STATS ROW */
-  .pastor-stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:1rem; margin-bottom:2rem; }
-  .pstat { background:#fff; border-radius:6px; border:1px solid rgba(0,0,0,0.1); padding:1.1rem; text-align:center; }
-  .pstat .ps-val { font-size:28px; font-weight:400; color:var(--deep-red); font-family:Georgia,serif; }
-  .pstat .ps-label { font-size:11px; color:var(--muted); font-family:sans-serif; letter-spacing:0.08em; text-transform:uppercase; margin-top:3px; }
-
-  /* FOOTER */
-  footer { background:var(--deep-red); border-top:3px solid var(--gold); padding:2rem 1.25rem; text-align:center; }
-  .footer-name { color:var(--gold); font-size:14px; font-style:italic; margin-bottom:0.3rem; }
-  .footer-church { color:rgba(255,255,255,0.45); font-size:10px; letter-spacing:0.12em; text-transform:uppercase; font-family:sans-serif; }
-  .footer-line { width:36px; height:1px; background:var(--gold); margin:0.9rem auto; opacity:0.4; }
-  .footer-copy { color:rgba(255,255,255,0.25); font-size:10px; font-family:sans-serif; }
-
-  @media(max-width:520px) {
-    .header-inner { height:58px; }
-    .church-name .line1 { font-size:11px; }
-    .btn-outline,.btn-gold { font-size:10px; padding:6px 10px; }
-  }
-</style>
-</head>
-<body>
-
-<div id="notif-banner">
-  ⚠ Your last tithe draft was not processed. Your access remains active. Please contact the preacher's steward at your earliest convenience.
-</div>
-
-<!-- AUTH MODAL -->
-<div class="modal-bg" id="auth-modal">
-  <div class="modal">
-    <button class="modal-close" onclick="closeModal()">&times;</button>
-    <h2 id="modal-title">Welcome Home</h2>
-    <p class="sub" id="modal-sub">Sign in to access your member portal.</p>
-    <div class="modal-msg" id="modal-msg"></div>
-    <div id="login-form">
-      <label>Email address</label>
-      <input type="email" id="login-email" placeholder="you@example.com" autocomplete="email">
-      <label>Password</label>
-      <input type="password" id="login-password" placeholder="Your password" autocomplete="current-password">
-      <button class="modal-submit" id="login-btn" onclick="handleLogin()">Sign In</button>
-      <div class="modal-toggle">No account yet? <a onclick="switchToRegister()">Register here</a></div>
-    </div>
-    <div id="register-form" style="display:none;">
-      <label>Full name</label>
-      <input type="text" id="reg-name" placeholder="Your full name">
-      <label>Email address</label>
-      <input type="email" id="reg-email" placeholder="you@example.com" autocomplete="email">
-      <label>Password</label>
-      <input type="password" id="reg-password" placeholder="Create a password" autocomplete="new-password">
-      <button class="modal-submit" id="reg-btn" onclick="handleRegister()">Create Account</button>
-      <div class="modal-toggle">Already have an account? <a onclick="switchToLogin()">Sign in</a></div>
-    </div>
-  </div>
-</div>
-
-<!-- HEADER -->
-<header>
-  <div class="header-inner">
-    <div class="logo-area" onclick="showPage('home')">
-      <div class="logo-circle">✝</div>
-      <div class="church-name">
-        <div class="line1">Greater Harvest</div>
-        <div class="line2">AME Zion Church &bull; Wilson, NC</div>
-      </div>
-    </div>
-    <div class="header-actions">
-      <span id="user-greeting"></span>
-      <button class="btn-pastor" id="pastor-portal-btn" onclick="showPage('pastor')" style="display:none;">Pastor View</button>
-      <button class="btn-outline" id="login-btn-header" onclick="openModal()">Member Login</button>
-      <button class="btn-danger"  id="logout-btn" onclick="handleLogout()" style="display:none;">Sign Out</button>
-      <button class="btn-gold" onclick="openModal()">Give Online</button>
-    </div>
-  </div>
-</header>
-
-<!-- ═══════════════ HOME PAGE ═══════════════ -->
-<div class="page active" id="page-home">
-  <div class="season-strip">
-    <p>Worshiping in the season of <span class="hl" id="season-name">Winter</span> &mdash; <span id="season-scripture-strip"></span></p>
-  </div>
-  <section class="hero">
-    <div class="hero-inner">
-      <div class="hero-label">
-        <p class="eyebrow">Live &amp; On-Demand Worship</p>
-        <h1 id="hero-title">The Word Is Going Forth</h1>
-        <p class="verse" id="hero-verse"></p>
-      </div>
-      <div class="video-wrap">
-        <iframe
-          src="https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Fgreaterharvestwilson%2F&show_text=false&width=900&appId"
-          width="900" height="506" scrolling="no" frameborder="0"
-          allowfullscreen="true" allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share">
-        </iframe>
-      </div>
-      <div class="video-chrome">
-        <div class="chrome-left">
-          <div class="live-dot"></div>
-          <p>Live every Sunday &bull; 11:00 AM EST</p>
-        </div>
-      </div>
-    </div>
-  </section>
-  <div class="season-verse-strip"><p id="season-verse-bottom"></p></div>
-  <section class="nav-section">
-    <div class="nav-section-inner">
-      <div class="section-eyebrow">
-        <p class="tag">Worship With Us</p>
-        <h2>Choose How You Will Join</h2>
-      </div>
-      <div class="nav-cards">
-        <div class="nav-card" onclick="handlePortalNav('sanctuary')">
-          <div class="card-top red"></div>
-          <div class="card-body">
-            <div class="card-icon-row"><div class="card-icon red">⛪</div><span class="card-tag red">In Person</span></div>
-            <h3>Join Us This Sunday</h3>
-            <p>Come through our doors and experience authentic, spirit-filled worship with the Greater Harvest family.</p>
-            <div class="card-details">
-              <div class="detail-row"><span>🕐</span><span>Sunday Worship — 11:00 AM</span></div>
-              <div class="detail-row"><span>📍</span><span>Wilson, North Carolina</span></div>
-              <div class="detail-row"><span>📖</span><span>Midweek Bible Study — Wednesday</span></div>
-            </div>
-            <div class="card-cta red"><span>Plan Your Visit</span><span class="arr">→</span></div>
-          </div>
-        </div>
-        <div class="nav-card" onclick="handlePortalNav('vineyard')">
-          <div class="card-top gold"></div>
-          <div class="card-body">
-            <div class="card-icon-row"><div class="card-icon gold">🌐</div><span class="card-tag gold">Online</span></div>
-            <h3>Explore Global Ministries</h3>
-            <p>Worship knows no borders. Join our live broadcast and access sermon archives and AME Zion heritage resources.</p>
-            <div class="card-details">
-              <div class="detail-row"><span>📡</span><span>Live Stream every Sunday</span></div>
-              <div class="detail-row"><span>📱</span><span>Mobile &amp; smart TV access</span></div>
-              <div class="detail-row"><span>🗂</span><span>Full sermon &amp; teaching archive</span></div>
-            </div>
-            <div class="card-cta gold"><span>Watch &amp; Connect</span><span class="arr">→</span></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-  <footer>
-    <p class="footer-name">The Reverend Michael Phillip Norrington Matthews</p>
-    <p class="footer-church">Pastor &bull; Greater Harvest AME Zion Church &bull; Wilson, NC</p>
-    <div class="footer-line"></div>
-    <p class="footer-copy">&copy; <span id="footer-year"></span> Greater Harvest AME Zion Church. All rights reserved.</p>
-  </footer>
-</div>
-
-<!-- ═══════════════ PASTOR PORTAL ═══════════════ -->
-<div class="page" id="page-pastor">
-  <div class="pastor-dash">
-    <div class="pastor-dash-inner">
-      <span class="pastor-dash-label">✝ Pastor Dashboard</span>
-      <div class="pastor-dash-divider"></div>
-      <button class="pastor-dash-btn active" id="pd-home" onclick="showPage('home')">Public Home</button>
-      <button class="pastor-dash-btn" id="pd-sanctuary" onclick="showPage('sanctuary')">Sanctuary Portal</button>
-      <button class="pastor-dash-btn" id="pd-vineyard" onclick="showPage('vineyard')">Vineyard Portal</button>
-      <div class="pastor-dash-divider"></div>
-      <span class="pastor-stat">Viewing as: <span>Pastor (Master Access)</span></span>
-    </div>
-  </div>
-  <div class="portal-page">
-    <div class="portal-hero pastor-view">
-      <div class="portal-badge pastor">✝ Master Access — Pastor</div>
-      <h1>Good day, Pastor Matthews</h1>
-      <p class="pastor-line">The Reverend Michael Phillip Norrington Matthews &bull; Greater Harvest AME Zion Church</p>
-    </div>
-    <div class="portal-content">
-      <div class="portal-scripture pastor">
-        <blockquote>"Take heed therefore unto yourselves, and to all the flock, over the which the Holy Ghost hath made you overseer."</blockquote>
-        <cite>Acts 20:28 — King James Version</cite>
-      </div>
-      <p style="font-size:14px;font-family:sans-serif;color:var(--muted);margin-bottom:1.5rem;font-weight:500;text-transform:uppercase;letter-spacing:0.08em;">Enter a portal below or use the toolbar above</p>
-      <div class="pastor-switcher">
-        <div class="switcher-btn sanctuary-sw" onclick="showPage('sanctuary')">
-          <div class="sw-icon">⛪</div>
-          <div class="sw-title">The Sanctuary</div>
-          <div class="sw-sub">Local member portal — in-person congregation resources, Sunday schedule, ministry teams.</div>
-          <div class="sw-role">Local Member View →</div>
-        </div>
-        <div class="switcher-btn vineyard-sw" onclick="showPage('vineyard')">
-          <div class="sw-icon">🌐</div>
-          <div class="sw-title">The Vineyard</div>
-          <div class="sw-sub">Online member portal — global stream, sermon archive, AME Zion heritage, online Bible study.</div>
-          <div class="sw-role">Online Member View →</div>
-        </div>
-      </div>
-      <div class="pastor-stats">
-        <div class="pstat"><div class="ps-val">11AM</div><div class="ps-label">Sunday Service</div></div>
-        <div class="pstat"><div class="ps-val">Wed</div><div class="ps-label">Bible Study</div></div>
-        <div class="pstat"><div class="ps-val">2</div><div class="ps-label">Active Portals</div></div>
-        <div class="pstat"><div class="ps-val">Free</div><div class="ps-label">Hosting Plan</div></div>
-      </div>
-      <div class="portal-grid">
-        <div class="portal-card pastor-card">
-          <div class="pc-icon">👤</div>
-          <h3>Manage Members</h3>
-          <p>Go to your Supabase dashboard → Table Editor → profiles to assign member roles. Change "guest" to "local_member" or "online_member".</p>
-        </div>
-        <div class="portal-card pastor-card">
-          <div class="pc-icon">📺</div>
-          <h3>Facebook Live</h3>
-          <p>Your live stream embeds automatically on the home page every Sunday. Members see it without signing in.</p>
-        </div>
-        <div class="portal-card pastor-card">
-          <div class="pc-icon">🔔</div>
-          <h3>Flagged Members</h3>
-          <p>Members with failed tithe drafts are flagged in the database with access preserved. Check profiles table for flagged = true.</p>
-        </div>
-        <div class="portal-card pastor-card">
-          <div class="pc-icon">⚙️</div>
-          <h3>Site Updates</h3>
-          <p>To update your website, edit index.html on GitHub. Vercel redeploys automatically within 60 seconds.</p>
-        </div>
-      </div>
-    </div>
-    <footer>
-      <p class="footer-name">The Reverend Michael Phillip Norrington Matthews</p>
-      <p class="footer-church">Pastor &bull; Greater Harvest AME Zion Church &bull; Wilson, NC</p>
-      <div class="footer-line"></div>
-      <p class="footer-copy">&copy; <span class="footer-yr"></span> Greater Harvest AME Zion Church. All rights reserved.</p>
-    </footer>
-  </div>
-</div>
-
-<!-- ═══════════════ SANCTUARY PORTAL ═══════════════ -->
-<div class="page" id="page-sanctuary">
-  <div class="portal-page">
-    <div class="portal-hero sanctuary">
-      <div class="portal-badge sanctuary">Local Member Portal</div>
-      <h1>The Sanctuary</h1>
-      <p class="pastor-line">Rev. Michael Phillip Norrington Matthews &bull; Greater Harvest AME Zion</p>
-    </div>
-    <div class="portal-content">
-      <div class="portal-scripture">
-        <blockquote>"I was glad when they said unto me, Let us go into the house of the LORD."</blockquote>
-        <cite>Psalm 122:1 — King James Version</cite>
-      </div>
-      <div class="portal-grid">
-        <div class="portal-card"><div class="pc-icon">📅</div><h3>This Sunday</h3><p>Service begins at 11:00 AM. Sunday School at 9:30 AM. Nursery available. Praise team rehearsal at 10:00 AM.</p></div>
-        <div class="portal-card"><div class="pc-icon">📖</div><h3>Bible Study</h3><p>Wednesday midweek Bible study led by Rev. Matthews. Contact the church office for location and materials.</p></div>
-        <div class="portal-card"><div class="pc-icon">🎵</div><h3>Worship Arts</h3><p>Greater Harvest Choir rehearses Thursday evenings. All voices welcome. Speak with the choir director to join.</p></div>
-        <div class="portal-card"><div class="pc-icon">🤝</div><h3>Ministry Teams</h3><p>Ushers, Deacons, Mothers Board, Youth Ministry, and Outreach Committee. Contact the office to serve.</p></div>
-        <div class="portal-card"><div class="pc-icon">📣</div><h3>Announcements</h3><p>Check back here each week for bulletin announcements, upcoming events, and church calendar updates.</p></div>
-        <div class="portal-card"><div class="pc-icon">✉️</div><h3>Contact Office</h3><p>Reach the church office for counseling appointments, prayer requests, or pastoral care referrals.</p></div>
-      </div>
-    </div>
-    <footer>
-      <p class="footer-name">The Reverend Michael Phillip Norrington Matthews</p>
-      <p class="footer-church">Pastor &bull; Greater Harvest AME Zion Church &bull; Wilson, NC</p>
-      <div class="footer-line"></div>
-      <p class="footer-copy">&copy; <span class="footer-yr"></span> Greater Harvest AME Zion Church. All rights reserved.</p>
-    </footer>
-  </div>
-</div>
-
-<!-- ═══════════════ VINEYARD PORTAL ═══════════════ -->
-<div class="page" id="page-vineyard">
-  <div class="portal-page">
-    <div class="portal-hero vineyard">
-      <div class="portal-badge vineyard">Online Member Portal</div>
-      <h1>The Vineyard</h1>
-      <p class="pastor-line">Rev. Michael Phillip Norrington Matthews &bull; Greater Harvest AME Zion</p>
-    </div>
-    <div class="portal-content">
-      <div class="portal-scripture vineyard">
-        <blockquote>"The harvest truly is plenteous, but the labourers are few; pray ye therefore the Lord of the harvest."</blockquote>
-        <cite>Matthew 9:37–38 — King James Version</cite>
-      </div>
-      <div class="portal-grid">
-        <div class="portal-card vineyard"><div class="pc-icon">📺</div><h3>Live Stream</h3><p>Join our Sunday morning worship live on Facebook every week at 11:00 AM Eastern. Share the link with family and friends.</p></div>
-        <div class="portal-card vineyard"><div class="pc-icon">🎙</div><h3>Sermon Archive</h3><p>Access past messages from Pastor Matthews. Building now — full archive coming soon. Check Facebook for recent messages.</p></div>
-        <div class="portal-card vineyard"><div class="pc-icon">📜</div><h3>AME Zion Heritage</h3><p>Explore the rich history of the African Methodist Episcopal Zion Church — the Freedom Church — and our legacy.</p></div>
-        <div class="portal-card vineyard"><div class="pc-icon">🙏</div><h3>Prayer Requests</h3><p>Submit a prayer request to the Greater Harvest prayer team. Your request is received with care and lifted before the Lord.</p></div>
-        <div class="portal-card vineyard"><div class="pc-icon">📖</div><h3>Online Bible Study</h3><p>Midweek Bible Empowerment Study. Led by Rev. Matthews and Rev. Dr. Evon Best-Milton. Join from anywhere.</p></div>
-        <div class="portal-card vineyard"><div class="pc-icon">💌</div><h3>Stay Connected</h3><p>Follow Greater Harvest on Facebook for announcements, devotionals, and community updates throughout the week.</p></div>
-      </div>
-    </div>
-    <footer>
-      <p class="footer-name">The Reverend Michael Phillip Norrington Matthews</p>
-      <p class="footer-church">Pastor &bull; Greater Harvest AME Zion Church &bull; Wilson, NC</p>
-      <div class="footer-line"></div>
-      <p class="footer-copy">&copy; <span class="footer-yr"></span> Greater Harvest AME Zion Church. All rights reserved.</p>
-    </footer>
-  </div>
-</div>
-
-<!-- ═══════════════ PENDING PAGE ═══════════════ -->
-<div class="page" id="page-pending">
-  <div style="max-width:560px;margin:4rem auto;padding:2rem 1.25rem;text-align:center;">
-    <div style="font-size:48px;margin-bottom:1rem;">🕊</div>
-    <h2 style="font-size:24px;font-weight:400;color:var(--deep-red);font-family:Georgia,serif;margin-bottom:0.6rem;">Welcome to Greater Harvest</h2>
-    <p style="font-size:14px;color:var(--muted);font-family:sans-serif;line-height:1.7;margin-bottom:1.5rem;">Your account has been created. A church administrator will assign your membership access shortly. Once approved, you will be able to enter the Sanctuary or Vineyard portal on your next sign-in.</p>
-    <p style="font-size:13px;color:var(--muted);font-family:sans-serif;font-style:italic;">"Wait on the LORD: be of good courage, and he shall strengthen thine heart." — Psalm 27:14</p>
-    <button class="btn-gold" style="margin-top:1.5rem;" onclick="showPage('home')">Return to Home</button>
-  </div>
-  <footer>
-    <p class="footer-name">The Reverend Michael Phillip Norrington Matthews</p>
-    <p class="footer-church">Pastor &bull; Greater Harvest AME Zion Church &bull; Wilson, NC</p>
-    <div class="footer-line"></div>
-    <p class="footer-copy">&copy; <span class="footer-yr"></span> Greater Harvest AME Zion Church.</p>
-  </footer>
-</div>
 
 <script>
-const SUPABASE_URL = 'https://amkfdqsrtawqjyryhjqn.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_SnnvEXHJarBR1JgH5ObIpg_12x921vc';
-const { createClient } = supabase;
-const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+  // 1. Initialize Supabase
+  const SUPABASE_URL = "https://amkfdqsrtawqjyryhjqn.supabase.co";
+  const SUPABASE_ANON_KEY = "YOUR_PUBLIC_ANON_KEY_HERE"; // Replace with your actual anon key
+  const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// ── SEASONAL THEME ──
-const SEASONS = {
-  winter:{ months:[12,1,2], name:'Winter', bg:'#152040', accent:'#1e3a6e', highlight:'#4a7abf', soft:'#c8d8f0', glow:'rgba(74,122,191,0.15)', strip:'"He giveth snow like wool." — Psalm 147:16', verse:'"He giveth snow like wool: he scattereth the hoarfrost like ashes." — Psalm 147:16', heroTitle:'Walking in the Light of His Word' },
-  spring:{ months:[3,4,5],  name:'Spring', bg:'#1a2e1a', accent:'#2d5a2d', highlight:'#5a9e5a', soft:'#c2e0c2', glow:'rgba(90,158,90,0.15)',   strip:'"The flowers appear on the earth." — Song of Solomon 2:12', verse:'"For, lo, the winter is past... the flowers appear on the earth." — Song of Solomon 2:11–12', heroTitle:'New Life in the Risen Christ' },
-  summer:{ months:[6,7,8],  name:'Summer', bg:'#1a1500', accent:'#4a3800', highlight:'#c9a84c', soft:'#f0d080', glow:'rgba(201,168,76,0.15)', strip:'"Praise him, all ye stars of light." — Psalm 148:3', verse:'"Praise ye him, sun and moon: praise him, all ye stars of light." — Psalm 148:3', heroTitle:'Standing Firm in the Summer of Your Faith' },
-  autumn:{ months:[9,10,11],name:'Autumn', bg:'#1f0f00', accent:'#5c2a00', highlight:'#c06020', soft:'#e8b888', glow:'rgba(192,96,32,0.15)',  strip:'"Trust in the LORD with all thine heart." — Proverbs 3:5', verse:'"Trust in the LORD with all thine heart; and lean not unto thine own understanding." — Proverbs 3:5', heroTitle:'A Harvest of Righteousness' },
-};
+  // 2. Global state for the authenticated user
+  let currentUser = null;
+  let currentUserRole = 'guest';
 
-function applySeason() {
-  const month = new Date().getMonth() + 1;
-  const year  = new Date().getFullYear();
-  let s = SEASONS.winter;
-  for (const v of Object.values(SEASONS)) { if (v.months.includes(month)) { s = v; break; } }
-  const r = document.documentElement.style;
-  r.setProperty('--season-bg', s.bg);
-  r.setProperty('--season-accent', s.accent);
-  r.setProperty('--season-highlight', s.highlight);
-  r.setProperty('--season-soft', s.soft);
-  r.setProperty('--season-glow', s.glow);
-  setText('season-name', s.name);
-  setText('season-scripture-strip', s.strip);
-  setText('hero-verse', s.verse);
-  setText('season-verse-bottom', s.verse);
-  setText('hero-title', s.heroTitle);
-  setText('footer-year', year);
-  document.querySelectorAll('.footer-yr').forEach(el => el.textContent = year);
-}
+  // 3. Centralized Client-Side Router
+  function routeToPage(role) {
+    console.log(`Routing to view container for role: [${role}]`);
+    
+    // Hide all view panels first
+    const sections = ['home-page', 'pastor-dashboard', 'sanctuary-portal', 'vineyard-portal', 'pending-page'];
+    sections.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.display = 'none';
+    });
 
-function setText(id, val) { const el = document.getElementById(id); if (el) el.textContent = val; }
+    // Toggle the Gold Pastor View Button in the header if it exists
+    const pastorBtn = document.getElementById('pastor-view-btn');
+    if (pastorBtn) {
+      pastorBtn.style.display = (role === 'pastor') ? 'block' : 'none';
+    }
 
-// ── PAGE ROUTING ──
-function showPage(name) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  const t = document.getElementById('page-' + name);
-  if (t) { t.classList.add('active'); window.scrollTo(0,0); }
-}
+    // Display the targeted container based on role mapping
+    switch (role) {
+      case 'pastor':
+        showElement('pastor-dashboard');
+        break;
+      case 'local_member':
+        showElement('sanctuary-portal');
+        break;
+      case 'online_member':
+        showElement('vineyard-portal');
+        break;
+      case 'guest':
+      default:
+        showElement('pending-page');
+        break;
+    }
+  }
 
-// ── AUTH MODAL ──
-function openModal()  { document.getElementById('auth-modal').classList.add('open'); switchToLogin(); }
-function closeModal() { document.getElementById('auth-modal').classList.remove('open'); clearMsg(); }
-function switchToLogin() {
-  document.getElementById('login-form').style.display = 'block';
-  document.getElementById('register-form').style.display = 'none';
-  document.getElementById('modal-title').textContent = 'Welcome Home';
-  document.getElementById('modal-sub').textContent = 'Sign in to access your member portal.';
-  clearMsg();
-}
-function switchToRegister() {
-  document.getElementById('login-form').style.display = 'none';
-  document.getElementById('register-form').style.display = 'block';
-  document.getElementById('modal-title').textContent = 'Create Your Account';
-  document.getElementById('modal-sub').textContent = 'Join the Greater Harvest online community.';
-  clearMsg();
-}
-function showMsg(text, type) { const el = document.getElementById('modal-msg'); el.textContent = text; el.className = 'modal-msg ' + type; }
-function clearMsg() { const el = document.getElementById('modal-msg'); el.textContent = ''; el.className = 'modal-msg'; }
+  function showElement(id) {
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'block';
+    else console.warn(`Element with id #${id} was not found in the HTML.`);
+  }
 
-// ── LOGIN ──
-async function handleLogin() {
-  const email = document.getElementById('login-email').value.trim();
-  const password = document.getElementById('login-password').value;
-  const btn = document.getElementById('login-btn');
-  if (!email || !password) { showMsg('Please enter your email and password.', 'error'); return; }
-  btn.disabled = true; btn.textContent = 'Signing in…';
-  const { data, error } = await sb.auth.signInWithPassword({ email, password });
-  btn.disabled = false; btn.textContent = 'Sign In';
-  if (error) { showMsg(error.message, 'error'); return; }
-  closeModal();
-  await routeByRole(data.user);
-}
+  // 4. Secure Profile Fetching (Handles RLS authentication window)
+  async function fetchUserRole(userId) {
+    try {
+      console.log("Fetching profile for UUID:", userId);
+      
+      const { data: profile, error } = await supabase
+        .from('profiles')
+        .select('user_role')
+        .eq('id', userId)
+        .single();
 
-// ── REGISTER ──
-async function handleRegister() {
-  const name = document.getElementById('reg-name').value.trim();
-  const email = document.getElementById('reg-email').value.trim();
-  const password = document.getElementById('reg-password').value;
-  const btn = document.getElementById('reg-btn');
-  if (!name || !email || !password) { showMsg('Please fill in all fields.', 'error'); return; }
-  if (password.length < 6) { showMsg('Password must be at least 6 characters.', 'error'); return; }
-  btn.disabled = true; btn.textContent = 'Creating account…';
-  const { data, error } = await sb.auth.signUp({ email, password, options: { data: { full_name: name } } });
-  btn.disabled = false; btn.textContent = 'Create Account';
-  if (error) { showMsg(error.message, 'error'); return; }
-  showMsg('Account created! Please check your email to confirm, then sign in.', 'success');
-}
+      if (error) {
+        // If RLS blocks it, or if it doesn't exist yet, it falls through to guest
+        console.error("Database read error (Possible RLS blockage):", error.message);
+        return 'guest';
+      }
 
-// ── LOGOUT ──
-async function handleLogout() {
-  await sb.auth.signOut();
-  setLoggedOutUI();
-  showPage('home');
-}
+      if (profile && profile.user_role) {
+        return profile.user_role;
+      }
+      
+      return 'guest';
+    } catch (err) {
+      console.error("Unexpected error fetching profile:", err);
+      return 'guest';
+    }
+  }
 
-// ── ROLE ROUTING ──
-async function routeByRole(user) {
-  const { data: profile } = await sb.from('profiles').select('role, full_name, flagged').eq('id', user.id).single();
-  const role      = profile?.role || 'guest';
-  const firstName = (profile?.full_name || user.email).split(' ')[0];
-  const flagged   = profile?.flagged || false;
+  // 5. The Core Fix: Reactive Auth Listener
+  // This fires automatically on load, on sign-in, and on sign-out.
+  supabase.auth.onAuthStateChange(async (event, session) => {
+    console.log(`Supabase Auth Event Triggered: [${event}]`);
 
-  setLoggedInUI(firstName, role);
-  if (flagged) document.getElementById('notif-banner').classList.add('show');
-
-  if (role === 'pastor')        { showPage('pastor');    return; }
-  if (role === 'local_member')  { showPage('sanctuary'); return; }
-  if (role === 'online_member') { showPage('vineyard');  return; }
-  showPage('pending');
-}
-
-// ── PORTAL NAV ──
-async function handlePortalNav(portal) {
-  const { data: { user } } = await sb.auth.getUser();
-  if (!user) { openModal(); return; }
-  const { data: profile } = await sb.from('profiles').select('role').eq('id', user.id).single();
-  const role = profile?.role || 'guest';
-  if (role === 'pastor')                                          { showPage(portal);    return; }
-  if (portal === 'sanctuary' && role === 'local_member')         { showPage('sanctuary'); return; }
-  if (portal === 'vineyard'  && role === 'online_member')        { showPage('vineyard');  return; }
-  if (role === 'local_member')                                   { showPage('sanctuary'); return; }
-  if (role === 'online_member')                                  { showPage('vineyard');  return; }
-  if (role === 'guest')                                          { showPage('pending');   return; }
-  openModal();
-}
-
-// ── UI STATE ──
-function setLoggedInUI(firstName, role) {
-  const isPastor = role === 'pastor';
-  const greeting = document.getElementById('user-greeting');
-  greeting.innerHTML = 'Welcome, ' + firstName + (isPastor ? '<span class="pastor-badge-header">Pastor</span>' : '');
-  greeting.style.display = 'block';
-  document.getElementById('login-btn-header').style.display = 'none';
-  document.getElementById('logout-btn').style.display = 'inline-block';
-  document.getElementById('pastor-portal-btn').style.display = isPastor ? 'inline-block' : 'none';
-}
-
-function setLoggedOutUI() {
-  document.getElementById('user-greeting').style.display = 'none';
-  document.getElementById('login-btn-header').style.display = 'inline-block';
-  document.getElementById('logout-btn').style.display = 'none';
-  document.getElementById('pastor-portal-btn').style.display = 'none';
-  document.getElementById('notif-banner').classList.remove('show');
-}
-
-document.getElementById('auth-modal').addEventListener('click', function(e) { if (e.target === this) closeModal(); });
-
-// ── INIT ──
-async function init() {
-  applySeason();
-  const { data: { session } } = await sb.auth.getSession();
-  if (session?.user) await routeByRole(session.user);
-  sb.auth.onAuthStateChange(async (event, session) => {
-    if (event === 'SIGNED_OUT') setLoggedOutUI();
+    if (session && session.user) {
+      currentUser = session.user;
+      // Session token is now active; safe to bypass profiles RLS policy
+      currentUserRole = await fetchUserRole(session.user.id);
+      console.log(`Identity verified. Assigned role: ${currentUserRole}`);
+      routeToPage(currentUserRole);
+    } else {
+      // No active session found or user logged out
+      currentUser = null;
+      currentUserRole = 'guest';
+      console.log("No authenticated user found. Fallback to public Home.");
+      routeToPage('guest'); 
+      // Note: Swap to showing a public 'home-page' element here if unauthenticated guests shouldn't see the Pending screen immediately.
+    }
   });
-}
 
-init();
+  // 6. Form Submission Handlers (Bind these to your actual HTML elements)
+  async function handleSignIn(email, password) {
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) {
+      alert(`Login Failed: ${error.message}`);
+    }
+    // No routing needed here! onAuthStateChange captures the successful event automatically.
+  }
+
+  async function handleSignOut() {
+    const { error } = await supabase.auth.signOut();
+    if (error) console.error("Logout Error:", error.message);
+  }
 </script>
-</body>
-</html>
-Done
