@@ -4,43 +4,54 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Greater Harvest AME Zion Church</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Production-stable Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Supabase JS Client Ecosystem (v2 Library) -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body class="bg-gray-50 text-gray-900 font-sans antialiased transition-colors duration-500">
 
+    <!-- TICKER BANNER (Dynamic Scripture text updated by script) -->
     <div id="scripture-banner" class="text-center text-xs font-bold uppercase tracking-widest py-2 text-white shadow-inner">
         Loading Word...
     </div>
 
+    <!-- HEADER / NAVIGATION -->
     <header id="main-header" class="p-4 shadow-md flex justify-between items-center sticky top-0 z-50 border-b-4">
         <div class="flex items-center gap-3">
+            <!-- Circular Logo Placeholder Box -->
             <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-inner text-xl">
-                ⛪
+                重新⛪
             </div>
             <div class="font-black text-xl tracking-wide uppercase text-white">Greater Harvest AME Zion</div>
         </div>
         <div class="flex items-center gap-3">
+            <!-- Gold Pastor Action Button: Appears ONLY when user_role === 'pastor' -->
             <button id="pastor-view-btn" class="bg-amber-400 text-blue-950 font-black px-4 py-2 rounded shadow-md hover:bg-amber-300 transition-all text-xs uppercase tracking-wider" style="display: none;">
                 🌟 Pastor View Enabled
             </button>
+            <!-- Global Sign Out Action Button -->
             <button id="logout-nav-btn" onclick="handleSignOut()" class="border border-white/40 px-3 py-1.5 rounded hover:bg-white/10 text-xs font-semibold uppercase tracking-wider text-white transition-all" style="display: none;">
                 Sign Out
             </button>
         </div>
     </header>
 
+    <!-- MAIN INTERACTIVE CONTAINER -->
     <main class="max-w-5xl mx-auto my-8 px-4">
 
+        <!-- ============== PORTAL 1: PUBLIC LANDING PAGE ============== -->
         <div id="home-page" class="view-panel space-y-8" style="display: none;">
             
-            <div class="bg-black rounded-xl overflow-hidden shadow-2xl border-4 id-seasonal-border relative aspect-video max-w-4xl mx-auto">
+            <!-- Hero Video Section -->
+            <div id="hero-card" class="bg-black rounded-xl overflow-hidden shadow-2xl border-4 relative aspect-video max-w-4xl mx-auto">
                 <div class="absolute inset-0 flex flex-col justify-between p-6 bg-gradient-to-t from-black/80 via-transparent to-black/40 text-white z-10">
                     <div>
                         <span class="text-xs font-bold uppercase bg-white/20 px-2 py-1 rounded tracking-widest backdrop-blur-sm">Live Broadcast</span>
                         <h2 id="hero-sermon-title" class="text-2xl md:text-4xl font-black mt-2 drop-shadow">Loading Seasonal Word...</h2>
                     </div>
                     
+                    <!-- Fake Video Overlay Controls (Ready to replace with real iframe/video player) -->
                     <div class="flex items-center justify-between border-t border-white/20 pt-4 backdrop-blur-xs">
                         <button class="bg-white text-gray-900 rounded-full w-12 h-12 flex items-center justify-center font-bold text-xl hover:scale-105 transition-transform">▶</button>
                         <div class="text-xs font-mono tracking-wider bg-black/40 px-3 py-1 rounded">Sunday Worship Service • 11:00 AM</div>
@@ -49,7 +60,9 @@
                 </div>
             </div>
 
+            <!-- Double Navigation Core Interaction Cards -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+                <!-- Card A: Local Campus Info -->
                 <div class="bg-gradient-to-br from-red-800 to-red-950 text-white p-6 rounded-xl shadow-xl flex flex-col justify-between min-h-[160px] border-b-4 border-amber-500">
                     <div>
                         <h3 class="text-xl font-black tracking-wide uppercase">Join Us This Sunday</h3>
@@ -58,6 +71,7 @@
                     <div class="text-xs font-bold uppercase tracking-wider mt-4 bg-white/10 self-start px-3 py-1 rounded">📍 501 Ward Blvd, Wilson, NC</div>
                 </div>
 
+                <!-- Card B: Online Global Portal info -->
                 <div class="bg-gradient-to-br from-amber-500 to-amber-700 text-white p-6 rounded-xl shadow-xl flex flex-col justify-between min-h-[160px] border-b-4 border-amber-900">
                     <div>
                         <h3 class="text-xl font-black tracking-wide uppercase">Explore Global Ministries</h3>
@@ -67,6 +81,7 @@
                 </div>
             </div>
 
+            <!-- Shared Inline Interactive Form Module -->
             <div class="bg-white p-8 rounded-xl shadow-xl border border-gray-100 max-w-sm mx-auto mt-12">
                 <div class="text-center mb-6">
                     <h3 class="text-xl font-black text-gray-800 tracking-tight">Member Portal Entry</h3>
@@ -81,13 +96,14 @@
                         <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">Password</label>
                         <input id="login-password" type="password" required class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-red-700 focus:outline-none" placeholder="••••••••">
                     </div>
-                    <button type="submit" class="w-full text-white font-bold py-2.5 rounded text-xs uppercase tracking-widest shadow hover:opacity-90 transition-opacity id-seasonal-submit-btn">
+                    <button id="submit-btn" type="submit" class="w-full text-white font-bold py-2.5 rounded text-xs uppercase tracking-widest shadow hover:opacity-90 transition-opacity">
                         Sign In
                     </button>
                 </form>
             </div>
         </div>
 
+        <!-- ============== PORTAL 2: PASTOR DASHBOARD ============== -->
         <div id="pastor-dashboard" class="view-panel bg-white p-8 rounded-xl shadow-xl border-t-4 border-amber-400 space-y-6" style="display: none;">
             <div class="border-b pb-4">
                 <span class="text-xs uppercase tracking-widest font-black px-2.5 py-1 bg-amber-100 text-amber-800 rounded-full">Administrative Executive View</span>
@@ -106,16 +122,19 @@
             </div>
         </div>
 
+        <!-- ============== PORTAL 3: SANCTUARY PORTAL (local_member) ============== -->
         <div id="sanctuary-portal" class="view-panel bg-white p-8 rounded-xl shadow-xl border-t-4 border-red-800 space-y-4" style="display: none;">
             <h1 class="text-3xl font-black text-red-900">Sanctuary Member Portal</h1>
             <p class="text-gray-600">Welcome to your local home panel. This directory hosts exclusive schedules, local meeting data, and announcements for the congregation meeting on-site in Wilson.</p>
         </div>
 
+        <!-- ============== PORTAL 4: VINEYARD PORTAL (online_member) ============== -->
         <div id="vineyard-portal" class="view-panel bg-white p-8 rounded-xl shadow-xl border-t-4 border-emerald-600 space-y-4" style="display: none;">
             <h1 class="text-3xl font-black text-emerald-900">The Vineyard Portal</h1>
             <p class="text-gray-600">Welcome to your digital portal panel. This platform serves streaming media bundles, global networking groups, and virtual study resources for our online family campus.</p>
         </div>
 
+        <!-- ============== PORTAL 5: PENDING SCREEN GATE (guest) ============== -->
         <div id="pending-page" class="view-panel bg-amber-50 border border-amber-200 p-8 rounded-xl text-center max-w-md mx-auto space-y-3" style="display: none;">
             <div class="text-4xl">⏳</div>
             <h1 class="text-xl font-bold text-amber-900">Account Access Pending</h1>
@@ -124,12 +143,14 @@
 
     </main>
 
+    <!-- FOOTER ARCHITECTURE -->
     <footer class="text-center py-12 text-xs border-t border-gray-200 mt-16 space-y-1">
         <p class="text-gray-400">Dignified Operations Ecosystem Matrix</p>
         <p class="font-bold text-gray-700 italic">Rev. Michael P. Matthews, Sr.</p>
         <p class="text-gray-400">Greater Harvest AME Zion Church • Wilson, NC</p>
     </footer>
 
+    <!-- LOGIC CORE INJECTION -->
     <script>
         // 1. SUPABASE DATABASE INITIALIZATION SETUP
         const SUPABASE_URL = "https://amkfdqsrtawqjyryhjqn.supabase.co";
@@ -141,51 +162,46 @@
             const currentMonth = new Date().getMonth(); // 0 = Jan, 5 = June, etc.
             
             let config = {
-                bg: "bg-amber-500", border: "border-amber-400", button: "bg-amber-600",
+                bg: "bg-amber-500", border: "border-amber-400", button: "bg-amber-600", text: "text-amber-500",
                 scripture: "Psalm 148:3 — 'Praise him, sun and moon: praise him, all ye stars of light.'",
                 sermon: "Walking in the Gold: The Power of Summer Praise"
             };
 
             if (currentMonth >= 11 || currentMonth <= 1) { // Winter (Dec - Feb)
                 config = {
-                    bg: "bg-blue-900", border: "border-blue-700", button: "bg-blue-800",
+                    bg: "bg-blue-900", border: "border-blue-700", button: "bg-blue-800", text: "text-blue-700",
                     scripture: "Psalm 147:16 — 'He giveth snow like wool: he scattereth the hoarfrost like ashes.'",
                     sermon: "Faith Through Deep Winters: Relying on His Sovereignty"
                 };
             } else if (currentMonth >= 2 && currentMonth <= 4) { // Spring (Mar - May)
                 config = {
-                    bg: "bg-emerald-800", border: "border-emerald-600", button: "bg-emerald-700",
+                    bg: "bg-emerald-800", border: "border-emerald-600", button: "bg-emerald-700", text: "text-emerald-600",
                     scripture: "Song of Solomon 2:11-12 — 'For, lo, the winter is past, the rain is over and gone...'",
                     sermon: "The Seed in Fertile Ground: New Seasons of Resurrection Growth"
                 };
             } else if (currentMonth >= 8 && currentMonth <= 10) { // Autumn (Sep - Nov)
                 config = {
-                    bg: "bg-orange-700", border: "border-orange-600", button: "bg-orange-800",
+                    bg: "bg-orange-700", border: "border-orange-600", button: "bg-orange-800", text: "text-orange-600",
                     scripture: "Proverbs 3:5 — 'Trust in the Lord with all thine heart; and lean not unto thine own understanding.'",
                     sermon: "The Season of Harvest: Reaping What Was Faithfully Sown"
                 };
             }
 
-            // Apply configurations to structural DOM tokens
-            document.getElementById('scripture-banner').className = `text-center text-xs font-bold uppercase tracking-widest py-2 text-white shadow-inner ${config.bg}`;
-            document.getElementById('main-header').className = `p-4 shadow-md flex justify-between items-center sticky top-0 z-50 border-b-4 bg-red-800 ${config.border}`;
+            // Apply style configurations directly to DOM
+            const banner = document.getElementById('scripture-banner');
+            banner.className = `text-center text-xs font-bold uppercase tracking-widest py-2 text-white shadow-inner ${config.bg}`;
+            banner.innerText = config.scripture;
+
+            const header = document.getElementById('main-header');
+            header.className = `p-4 shadow-md flex justify-between items-center sticky top-0 z-50 border-b-4 bg-red-800 ${config.border}`;
             
-            const seasonalBorders = document.querySelectorAll('.id-seasonal-border');
-            seasonalBorders.forEach(el => el.style.borderColor = getComputedColor(config.border));
+            const heroCard = document.getElementById('hero-card');
+            heroCard.className = `bg-black rounded-xl overflow-hidden shadow-2xl border-4 relative aspect-video max-w-4xl mx-auto ${config.border}`;
             
-            const submitBtn = document.querySelector('.id-seasonal-submit-btn');
+            const submitBtn = document.getElementById('submit-btn');
             if (submitBtn) submitBtn.className = `w-full text-white font-bold py-2.5 rounded text-xs uppercase tracking-widest shadow hover:opacity-90 transition-opacity ${config.button}`;
 
-            document.getElementById('scripture-banner').innerText = config.scripture;
             document.getElementById('hero-sermon-title').innerText = config.sermon;
-        }
-
-        function getComputedColor(twClass) {
-            if (twClass.includes('amber')) return '#fbbf24';
-            if (twClass.includes('blue')) return '#1d4ed8';
-            if (twClass.includes('emerald')) return '#059669';
-            if (twClass.includes('orange')) return '#ea580c';
-            return 'gold';
         }
 
         // 3. REACTIVE VANILLA CLIENT-SIDE WEB ROUTER
@@ -202,7 +218,7 @@
             if (pastorBtn) pastorBtn.style.display = (role === 'pastor') ? 'block' : 'none';
             if (logoutBtn) logoutBtn.style.display = isAuthenticated ? 'block' : 'none';
 
-            // Base Isolation Case: Force Unauthenticated states strictly onto public home layout
+            // Base Isolation Case
             if (!isAuthenticated) {
                 document.getElementById('home-page').style.display = 'block';
                 return;
@@ -226,14 +242,14 @@
             }
         }
 
-        // 4. ROLE RESOLVER INTEGRATION (Fixed to target 'user_role' instead of 'role')
+        // 4. ROLE RESOLVER INTEGRATION (Fixed to target 'user_role')
         async function fetchUserRole(userId) {
             try {
                 console.log(`Querying token data row for active profile UUID: ${userId}`);
                 
                 const { data: profile, error } = await supabase
                     .from('profiles')
-                    .select('user_role') // Matches your actual database column structure!
+                    .select('user_role')
                     .eq('id', userId)
                     .single();
 
@@ -258,7 +274,6 @@
             console.log(`Global Authenticator Broadcast State Update: [${event}]`);
 
             if (session && session.user) {
-                // Session is bound cleanly. Retrieve user role reactively.
                 const evaluatedRole = await fetchUserRole(session.user.id);
                 console.log(`Security clearance passed. Executing navigation layout update for: ${evaluatedRole}`);
                 routeToPage(evaluatedRole, true);
@@ -282,7 +297,6 @@
             if (error) {
                 alert(`Authentication Exception: ${error.message}`);
             }
-            // onAuthStateChange automatically intercepts successful logins and handles structural shifting
         }
 
         async function handleSignOut() {
