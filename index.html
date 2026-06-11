@@ -4,53 +4,40 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Greater Harvest AME Zion Church</title>
-    <!-- Production-stable Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Supabase JS Client Ecosystem (v2 Library) -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body class="bg-gray-50 text-gray-900 font-sans antialiased transition-colors duration-500">
 
-    <!-- TICKER BANNER (Dynamic Scripture text updated by script) -->
     <div id="scripture-banner" class="text-center text-xs font-bold uppercase tracking-widest py-2 text-white shadow-inner bg-red-800">
         Loading Word...
     </div>
 
-    <!-- HEADER / NAVIGATION -->
     <header id="main-header" class="p-4 shadow-md flex justify-between items-center sticky top-0 z-50 border-b-4 bg-red-800 border-amber-500">
         <div class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-inner text-xl">
-                ⛪
-            </div>
+            <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-inner text-xl">⛪</div>
             <div class="font-black text-xl tracking-wide uppercase text-white">Greater Harvest AME Zion</div>
         </div>
         <div class="flex items-center gap-3">
-            <!-- Gold Pastor Action Button: Appears ONLY when user_role === 'pastor' -->
-            <button id="pastor-view-btn" class="bg-amber-400 text-blue-950 font-black px-4 py-2 rounded shadow-md hover:bg-amber-300 transition-all text-xs uppercase tracking-wider" style="display: none;">
-                🌟 Pastor View Enabled
+            <button id="pastor-view-btn" onclick="routeToPage('pastor', true)" class="bg-amber-400 text-blue-950 font-black px-4 py-2 rounded shadow-md hover:bg-amber-300 transition-all text-xs uppercase tracking-wider" style="display: none;">
+                🌟 Pastor View Panel
             </button>
-            <!-- Global Sign Out Action Button -->
             <button id="logout-nav-btn" onclick="handleSignOut()" class="border border-white/40 px-3 py-1.5 rounded hover:bg-white/10 text-xs font-semibold uppercase tracking-wider text-white transition-all" style="display: none;">
                 Sign Out
             </button>
         </div>
     </header>
 
-    <!-- MAIN INTERACTIVE CONTAINER -->
     <main class="max-w-5xl mx-auto my-8 px-4">
 
-        <!-- ============== PORTAL 1: PUBLIC LANDING PAGE ============== -->
         <div id="home-page" class="view-panel space-y-8">
-            
-            <!-- Hero Video Section -->
             <div id="hero-card" class="bg-black rounded-xl overflow-hidden shadow-2xl border-4 relative aspect-video max-w-4xl mx-auto border-amber-500">
                 <div class="absolute inset-0 flex flex-col justify-between p-6 bg-gradient-to-t from-black/80 via-transparent to-black/40 text-white z-10">
                     <div>
                         <span class="text-xs font-bold uppercase bg-white/20 px-2 py-1 rounded tracking-widest backdrop-blur-sm">Live Broadcast</span>
                         <h2 id="hero-sermon-title" class="text-2xl md:text-4xl font-black mt-2 drop-shadow">Loading Seasonal Word...</h2>
                     </div>
-                    
-                    <div class="flex items-center justify-between border-t border-white/20 pt-4 backdrop-blur-xs">
+                    <div class="flex items-center justify-between border-t border-white/20 pt-4">
                         <button class="bg-white text-gray-900 rounded-full w-12 h-12 flex items-center justify-center font-bold text-xl hover:scale-105 transition-transform">▶</button>
                         <div class="text-xs font-mono tracking-wider bg-black/40 px-3 py-1 rounded">Sunday Worship Service • 11:00 AM</div>
                         <div class="flex gap-3 text-lg opacity-80"><span>🔊</span><span>⛶</span></div>
@@ -58,26 +45,6 @@
                 </div>
             </div>
 
-            <!-- Double Navigation Core Interaction Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-                <div class="bg-gradient-to-br from-red-800 to-red-950 text-white p-6 rounded-xl shadow-xl flex flex-col justify-between min-h-[160px] border-b-4 border-amber-500">
-                    <div>
-                        <h3 class="text-xl font-black tracking-wide uppercase">Join Us This Sunday</h3>
-                        <p class="text-sm opacity-80 mt-1">Experience physical fellowship and sanctuary worship live with our church family in Wilson, NC.</p>
-                    </div>
-                    <div class="text-xs font-bold uppercase tracking-wider mt-4 bg-white/10 self-start px-3 py-1 rounded">📍 501 Ward Blvd, Wilson, NC</div>
-                </div>
-
-                <div class="bg-gradient-to-br from-amber-500 to-amber-700 text-white p-6 rounded-xl shadow-xl flex flex-col justify-between min-h-[160px] border-b-4 border-amber-900">
-                    <div>
-                        <h3 class="text-xl font-black tracking-wide uppercase">Explore Global Ministries</h3>
-                        <p class="text-sm opacity-80 mt-1">Connect with our digital campus outreach programs, global bible studies, and online remote fellowship cells.</p>
-                    </div>
-                    <div class="text-xs font-bold uppercase tracking-wider mt-4 bg-black/20 self-start px-3 py-1 rounded">🌐 Virtual Vineyards Campus</div>
-                </div>
-            </div>
-
-            <!-- Shared Inline Interactive Form Module -->
             <div class="bg-white p-8 rounded-xl shadow-xl border border-gray-100 max-w-sm mx-auto mt-12">
                 <div class="text-center mb-6">
                     <h3 class="text-xl font-black text-gray-800 tracking-tight">Member Portal Entry</h3>
@@ -86,7 +53,7 @@
                 <form onsubmit="event.preventDefault(); handleSignIn();" class="space-y-4">
                     <div>
                         <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">Email Address</label>
-                        <input id="login-email" type="email" required class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-red-700 focus:outline-none" placeholder="mpnmatthews@gmail.com">
+                        <input id="login-email" type="email" required class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-red-700 focus:outline-none" placeholder="pastor@example.com">
                     </div>
                     <div>
                         <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">Password</label>
@@ -99,13 +66,18 @@
             </div>
         </div>
 
-        <!-- ============== PORTAL 2: PASTOR DASHBOARD ============== -->
         <div id="pastor-dashboard" class="view-panel bg-white p-8 rounded-xl shadow-xl border-t-4 border-amber-400 space-y-6" style="display: none;">
-            <div class="border-b pb-4">
-                <span class="text-xs uppercase tracking-widest font-black px-2.5 py-1 bg-amber-100 text-amber-800 rounded-full">Administrative Executive View</span>
-                <h1 class="text-4xl font-black text-gray-900 mt-2">Pastor Dashboard</h1>
+            <div class="border-b pb-4 flex justify-between items-start">
+                <div>
+                    <span class="text-xs uppercase tracking-widest font-black px-2.5 py-1 bg-amber-100 text-amber-800 rounded-full">Administrative Executive View</span>
+                    <h1 class="text-4xl font-black text-gray-900 mt-2">Pastor Dashboard</h1>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="routeToPage('local_member', true)" class="bg-red-800 text-white font-bold text-xs uppercase px-3 py-2 rounded shadow hover:bg-red-700 transition-colors">Go To Sanctuary Portal</button>
+                    <button onclick="routeToPage('online_member', true)" class="bg-emerald-700 text-white font-bold text-xs uppercase px-3 py-2 rounded shadow hover:bg-emerald-600 transition-colors">Go To Vineyard Portal</button>
+                </div>
             </div>
-            <p class="text-gray-600">Welcome back, Pastor. Below are your administrative management options for the localized church body and online vineyard structures.</p>
+            <p class="text-gray-600">Welcome back, Pastor. Below are your administrative management configurations.</p>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="border p-4 rounded bg-gray-50 border-l-4 border-red-700">
                     <h3 class="font-bold text-red-950 text-lg">Sanctuary Administration</h3>
@@ -118,35 +90,48 @@
             </div>
         </div>
 
-        <!-- ============== PORTAL 3: SANCTUARY PORTAL (local_member) ============== -->
-        <div id="sanctuary-portal" class="view-panel bg-white p-8 rounded-xl shadow-xl border-t-4 border-red-800 space-y-4" style="display: none;">
-            <h1 class="text-3xl font-black text-red-900">Sanctuary Member Portal</h1>
-            <p class="text-gray-600">Welcome to your local home panel. This directory hosts exclusive schedules, local meeting data, and announcements for the congregation meeting on-site in Wilson.</p>
+        <div id="sanctuary-portal" class="view-panel bg-white p-8 rounded-xl shadow-xl border-t-4 border-red-800 space-y-6" style="display: none;">
+            <div class="border-b pb-4">
+                <h1 class="text-3xl font-black text-red-900">Sanctuary Member Portal</h1>
+                <p class="text-sm text-gray-500 mt-1">Exclusive sanctuary schedules, local meeting data, and local worship recordings.</p>
+            </div>
+
+            <div>
+                <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">📼 Past Service & Broadcast Recordings</h2>
+                <div id="sanctuary-media-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <p class="text-xs text-gray-400 italic">Scanning church broadcast databases...</p>
+                </div>
+            </div>
         </div>
 
-        <!-- ============== PORTAL 4: VINEYARD PORTAL (online_member) ============== -->
-        <div id="vineyard-portal" class="view-panel bg-white p-8 rounded-xl shadow-xl border-t-4 border-emerald-600 space-y-4" style="display: none;">
-            <h1 class="text-3xl font-black text-emerald-900">The Vineyard Portal</h1>
-            <p class="text-gray-600">Welcome to your digital portal panel. This platform serves streaming media bundles, global networking groups, and virtual study resources for our online family campus.</p>
+        <div id="vineyard-portal" class="view-panel bg-white p-8 rounded-xl shadow-xl border-t-4 border-emerald-600 space-y-6" style="display: none;">
+            <div class="border-b pb-4">
+                <h1 class="text-3xl font-black text-emerald-900">The Vineyard Portal</h1>
+                <p class="text-sm text-gray-500 mt-1">Streaming media bundles, global networking groups, and dynamic virtual study resources.</p>
+            </div>
+
+            <div>
+                <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">🌐 Global Campus Video Vault</h2>
+                <div id="vineyard-media-grid" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <p class="text-xs text-gray-400 italic">Scanning global media catalogs...</p>
+                </div>
+            </div>
         </div>
 
-        <!-- ============== PORTAL 5: PENDING SCREEN GATE (guest) ============== -->
         <div id="pending-page" class="view-panel bg-amber-50 border border-amber-200 p-8 rounded-xl text-center max-w-md mx-auto space-y-3" style="display: none;">
             <div class="text-4xl">⏳</div>
             <h1 class="text-xl font-bold text-amber-900">Account Access Pending</h1>
-            <p class="text-sm text-amber-700">Your profile registration was processed securely. A church system steward must verify your placement before directory privileges unlock. Thank you for your patience!</p>
+            <p class="text-sm text-amber-700">Your profile registration was processed securely. A church system steward must verify your placement before directory privileges unlock.</p>
         </div>
 
     </main>
 
-    <!-- FOOTER ARCHITECTURE -->
     <footer class="text-center py-12 text-xs border-t border-gray-200 mt-16 space-y-1">
         <p class="text-gray-400">Dignified Operations Ecosystem Matrix</p>
         <p class="font-bold text-gray-700 italic">Rev. Michael P. Matthews, Sr.</p>
         <p class="text-gray-400">Greater Harvest AME Zion Church • Wilson, NC</p>
     </footer>
 
-    <!-- LOGIC CORE INJECTION -->
     <script>
         const SUPABASE_URL = "https://amkfdqsrtawqjyryhjqn.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_SnnvEXHJarBR1JgH5ObIpg_12x921vc"; 
@@ -206,6 +191,71 @@
             } catch (e) {}
         }
 
+        // Automated Archive Display Builder Loop
+        async function loadBroadcastArchives() {
+            if (!supabaseClient) return;
+            try {
+                const { data: broadcasts, error } = await supabaseClient
+                    .from('past_broadcasts')
+                    .select('*')
+                    .order('broadcast_date', { ascending: false });
+
+                if (error) {
+                    console.error("Error reading broadcast vault rows:", error.message);
+                    return;
+                }
+
+                const sanctuaryGrid = document.getElementById('sanctuary-media-grid');
+                const vineyardGrid = document.getElementById('vineyard-media-grid');
+
+                if (!broadcasts || broadcasts.length === 0) {
+                    const structuralFallback = `<p class="text-xs text-gray-400 italic col-span-full py-4 text-center border-2 border-dashed rounded-xl">No archive entries logged in database yet.</p>`;
+                    if (sanctuaryGrid) sanctuaryGrid.innerHTML = structuralFallback;
+                    if (vineyardGrid) vineyardGrid.innerHTML = structuralFallback;
+                    return;
+                }
+
+                // Clear layout loaders
+                if (sanctuaryGrid) sanctuaryGrid.innerHTML = '';
+                if (vineyardGrid) vineyardGrid.innerHTML = '';
+
+                broadcasts.forEach(media => {
+                    const badgeColor = media.media_type === 'audio' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800';
+                    const iconMarker = media.media_type === 'audio' ? '🎙️' : '📹';
+                    
+                    const mediaCardTemplate = `
+                        <div class="border border-gray-100 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow bg-gray-50 flex flex-col justify-between">
+                            <div class="relative bg-gray-900 aspect-video flex items-center justify-center text-white overflow-hidden">
+                                ${media.thumbnail_url ? `<img src="${media.thumbnail_url}" class="w-full h-full object-cover absolute inset-0 opacity-80" />` : ''}
+                                <span class="text-3xl relative z-10 drop-shadow">${iconMarker}</span>
+                                <span class="absolute top-2 left-2 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full ${badgeColor} z-10 shadow-sm">${media.media_type}</span>
+                            </div>
+                            <div class="p-4 flex-1 flex flex-col justify-between space-y-3">
+                                <div>
+                                    <span class="text-[10px] font-mono text-gray-400 block">${media.broadcast_date}</span>
+                                    <h3 class="font-bold text-gray-800 text-sm line-clamp-2 mt-0.5">${media.title}</h3>
+                                </div>
+                                <a href="${media.embed_url}" target="_blank" class="block text-center border border-gray-200 text-gray-700 rounded-lg py-1.5 text-xs font-bold bg-white hover:bg-gray-50 transition-colors shadow-2xs">
+                                    Launch Recording
+                                </a>
+                            </div>
+                        </div>
+                    `;
+
+                    // Sort arrays contextually based on user portal visibility permissions
+                    if (!media.is_vineyard_exclusive && sanctuaryGrid) {
+                        sanctuaryGrid.innerHTML += mediaCardTemplate;
+                    }
+                    if (vineyardGrid) {
+                        vineyardGrid.innerHTML += mediaCardTemplate;
+                    }
+                });
+
+            } catch (err) {
+                console.error("Runtime exception pulling catalog archives:", err);
+            }
+        }
+
         // Web Router
         function routeToPage(role, isAuthenticated) {
             const panels = document.querySelectorAll('.view-panel');
@@ -228,9 +278,11 @@
                     break;
                 case 'local_member':
                     document.getElementById('sanctuary-portal').style.display = 'block';
+                    loadBroadcastArchives(); // Trigger catalog render loop
                     break;
                 case 'online_member':
                     document.getElementById('vineyard-portal').style.display = 'block';
+                    loadBroadcastArchives(); // Trigger catalog render loop
                     break;
                 case 'guest':
                 default:
@@ -239,13 +291,13 @@
             }
         }
 
-        // FETCH USER ROLE (FIXED: Now queries 'role' column instead of 'user_role')
+        // Fetch User Identity Row
         async function fetchUserRole(userId) {
             if (!supabaseClient) return 'guest';
             try {
                 const { data: profile, error } = await supabaseClient
                     .from('profiles')
-                    .select('role') // <-- Updated from 'user_role' to match your database column header
+                    .select('role')
                     .eq('id', userId)
                     .single();
 
@@ -256,7 +308,7 @@
             }
         }
 
-        // Auth listener initialization
+        // Auth listeners
         if (supabaseClient && supabaseClient.auth) {
             supabaseClient.auth.onAuthStateChange(async (event, session) => {
                 if (session && session.user) {
