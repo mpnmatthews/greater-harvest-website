@@ -9,11 +9,11 @@
 </head>
 <body class="bg-gray-50 text-gray-900 font-sans antialiased transition-colors duration-500">
 
-    <div id="scripture-banner" class="text-center text-xs font-bold uppercase tracking-widest py-2 text-white shadow-inner">
+    <div id="scripture-banner" class="text-center text-xs font-bold uppercase tracking-widest py-2 text-white shadow-inner bg-red-800">
         Loading Word...
     </div>
 
-    <header id="main-header" class="p-4 shadow-md flex justify-between items-center sticky top-0 z-50 border-b-4">
+    <header id="main-header" class="p-4 shadow-md flex justify-between items-center sticky top-0 z-50 border-b-4 bg-red-800 border-amber-500">
         <div class="flex items-center gap-3">
             <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-inner text-xl">
                 ⛪
@@ -32,9 +32,9 @@
 
     <main class="max-w-5xl mx-auto my-8 px-4">
 
-        <div id="home-page" class="view-panel space-y-8" style="display: none;">
+        <div id="home-page" class="view-panel space-y-8">
             
-            <div id="hero-card" class="bg-black rounded-xl overflow-hidden shadow-2xl border-4 relative aspect-video max-w-4xl mx-auto">
+            <div id="hero-card" class="bg-black rounded-xl overflow-hidden shadow-2xl border-4 relative aspect-video max-w-4xl mx-auto border-amber-500">
                 <div class="absolute inset-0 flex flex-col justify-between p-6 bg-gradient-to-t from-black/80 via-transparent to-black/40 text-white z-10">
                     <div>
                         <span class="text-xs font-bold uppercase bg-white/20 px-2 py-1 rounded tracking-widest backdrop-blur-sm">Live Broadcast</span>
@@ -81,7 +81,7 @@
                         <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">Password</label>
                         <input id="login-password" type="password" required class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-red-700 focus:outline-none" placeholder="••••••••">
                     </div>
-                    <button id="submit-btn" type="submit" class="w-full text-white font-bold py-2.5 rounded text-xs uppercase tracking-widest shadow hover:opacity-90 transition-opacity">
+                    <button id="submit-btn" type="submit" class="w-full text-white bg-amber-600 font-bold py-2.5 rounded text-xs uppercase tracking-widest shadow hover:opacity-90 transition-opacity">
                         Sign In
                     </button>
                 </form>
@@ -131,63 +131,79 @@
     </footer>
 
     <script>
-        // 1. SUPABASE DATABASE INITIALIZATION SETUP
+        // 1. SUPABASE DATABASE INITIALIZATION SETUP (Renamed to avoid variable name collision conflict)
         const SUPABASE_URL = "https://amkfdqsrtawqjyryhjqn.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_SnnvEXHJarBR1JgH5ObIpg_12x921vc"; 
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        let supabaseClient;
+        try {
+            // Using global window reference to confidently initialize without compiler crashes
+            if (window.supabase && typeof window.supabase.createClient === 'function') {
+                supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            } else {
+                console.error("Supabase script libraries failed to initialize from CDN.");
+            }
+        } catch (initError) {
+            console.error("Initialization exception safely caught:", initError.message);
+        }
 
         // 2. SEASONAL SCHEME LOGIC ROTATOR
         function applySeasonalTheme() {
-            const currentMonth = new Date().getMonth(); // 0 = Jan, 5 = June, etc.
-            
-            let config = {
-                bg: "bg-amber-500", border: "border-amber-400", button: "bg-amber-600", text: "text-amber-500",
-                scripture: "Psalm 148:3 — 'Praise him, sun and moon: praise him, all ye stars of light.'",
-                sermon: "Walking in the Gold: The Power of Summer Praise"
-            };
+            try {
+                const currentMonth = new Date().getMonth(); 
+                
+                let config = {
+                    bg: "bg-amber-500", border: "border-amber-400", button: "bg-amber-600", text: "text-amber-500",
+                    scripture: "Psalm 148:3 — 'Praise him, sun and moon: praise him, all ye stars of light.'",
+                    sermon: "Walking in the Gold: The Power of Summer Praise"
+                };
 
-            if (currentMonth >= 11 || currentMonth <= 1) { // Winter (Dec - Feb)
-                config = {
-                    bg: "bg-blue-900", border: "border-blue-700", button: "bg-blue-800", text: "text-blue-700",
-                    scripture: "Psalm 147:16 — 'He giveth snow like wool: he scattereth the hoarfrost like ashes.'",
-                    sermon: "Faith Through Deep Winters: Relying on His Sovereignty"
-                };
-            } else if (currentMonth >= 2 && currentMonth <= 4) { // Spring (Mar - May)
-                config = {
-                    bg: "bg-emerald-800", border: "border-emerald-600", button: "bg-emerald-700", text: "text-emerald-600",
-                    scripture: "Song of Solomon 2:11-12 — 'For, lo, the winter is past, the rain is over and gone...'",
-                    sermon: "The Seed in Fertile Ground: New Seasons of Resurrection Growth"
-                };
-            } else if (currentMonth >= 8 && currentMonth <= 10) { // Autumn (Sep - Nov)
-                config = {
-                    bg: "bg-orange-700", border: "border-orange-600", button: "bg-orange-800", text: "text-orange-600",
-                    scripture: "Proverbs 3:5 — 'Trust in the Lord with all thine heart; and lean not unto thine own understanding.'",
-                    sermon: "The Season of Harvest: Reaping What Was Faithfully Sown"
-                };
+                if (currentMonth >= 11 || currentMonth <= 1) { 
+                    config = {
+                        bg: "bg-blue-900", border: "border-blue-700", button: "bg-blue-800", text: "text-blue-700",
+                        scripture: "Psalm 147:16 — 'He giveth snow like wool: he scattereth the hoarfrost like ashes.'",
+                        sermon: "Faith Through Deep Winters: Relying on His Sovereignty"
+                    };
+                } else if (currentMonth >= 2 && currentMonth <= 4) { 
+                    config = {
+                        bg: "bg-emerald-800", border: "border-emerald-600", button: "bg-emerald-700", text: "text-emerald-600",
+                        scripture: "Song of Solomon 2:11-12 — 'For, lo, the winter is past, the rain is over and gone...'",
+                        sermon: "The Seed in Fertile Ground: New Seasons of Resurrection Growth"
+                    };
+                } else if (currentMonth >= 8 && currentMonth <= 10) { 
+                    config = {
+                        bg: "bg-orange-700", border: "border-orange-600", button: "bg-orange-800", text: "text-orange-600",
+                        scripture: "Proverbs 3:5 — 'Trust in the Lord with all thine heart; and lean not unto thine own understanding.'",
+                        sermon: "The Season of Harvest: Reaping What Was Faithfully Sown"
+                    };
+                }
+
+                const banner = document.getElementById('scripture-banner');
+                if (banner) {
+                    banner.className = `text-center text-xs font-bold uppercase tracking-widest py-2 text-white shadow-inner ${config.bg}`;
+                    banner.innerText = config.scripture;
+                }
+
+                const header = document.getElementById('main-header');
+                if (header) header.className = `p-4 shadow-md flex justify-between items-center sticky top-0 z-50 border-b-4 bg-red-800 ${config.border}`;
+                
+                const heroCard = document.getElementById('hero-card');
+                if (heroCard) heroCard.className = `bg-black rounded-xl overflow-hidden shadow-2xl border-4 relative aspect-video max-w-4xl mx-auto ${config.border}`;
+                
+                const submitBtn = document.getElementById('submit-btn');
+                if (submitBtn) submitBtn.className = `w-full text-white font-bold py-2.5 rounded text-xs uppercase tracking-widest shadow hover:opacity-90 transition-opacity ${config.button}`;
+
+                const titleElement = document.getElementById('hero-sermon-title');
+                if (titleElement) titleElement.innerText = config.sermon;
+            } catch (themeError) {
+                console.error("Theme assignment exception handled seamlessly:", themeError);
             }
-
-            // Apply style configurations directly to DOM
-            const banner = document.getElementById('scripture-banner');
-            banner.className = `text-center text-xs font-bold uppercase tracking-widest py-2 text-white shadow-inner ${config.bg}`;
-            banner.innerText = config.scripture;
-
-            const header = document.getElementById('main-header');
-            header.className = `p-4 shadow-md flex justify-between items-center sticky top-0 z-50 border-b-4 bg-red-800 ${config.border}`;
-            
-            const heroCard = document.getElementById('hero-card');
-            heroCard.className = `bg-black rounded-xl overflow-hidden shadow-2xl border-4 relative aspect-video max-w-4xl mx-auto ${config.border}`;
-            
-            const submitBtn = document.getElementById('submit-btn');
-            if (submitBtn) submitBtn.className = `w-full text-white font-bold py-2.5 rounded text-xs uppercase tracking-widest shadow hover:opacity-90 transition-opacity ${config.button}`;
-
-            document.getElementById('hero-sermon-title').innerText = config.sermon;
         }
 
         // 3. REACTIVE VANILLA CLIENT-SIDE WEB ROUTER
         function routeToPage(role, isAuthenticated) {
-            console.log(`Routing layout visibility matrices to targeted profile view: [${role}], Authenticated: [${isAuthenticated}]`);
+            console.log(`Routing view panels. Target role: [${role}], Authenticated Status: [${isAuthenticated}]`);
             
-            // Toggle uniform interface states
             const panels = document.querySelectorAll('.view-panel');
             panels.forEach(p => p.style.display = 'none');
 
@@ -197,13 +213,13 @@
             if (pastorBtn) pastorBtn.style.display = (role === 'pastor') ? 'block' : 'none';
             if (logoutBtn) logoutBtn.style.display = isAuthenticated ? 'block' : 'none';
 
-            // Base Isolation Case: If not authenticated, we ALWAYS want the public landing home-page.
+            // Safe Public Isolation Boundary
             if (!isAuthenticated) {
-                document.getElementById('home-page').style.display = 'block';
+                const home = document.getElementById('home-page');
+                if (home) home.style.display = 'block';
                 return;
             }
 
-            // Map authenticated routing values targeting database enum column
             switch (role) {
                 case 'pastor':
                     document.getElementById('pastor-dashboard').style.display = 'block';
@@ -221,12 +237,12 @@
             }
         }
 
-        // 4. ROLE RESOLVER INTEGRATION (Fixed to target 'user_role')
+        // 4. ROLE RESOLVER INTEGRATION
         async function fetchUserRole(userId) {
+            if (!supabaseClient) return 'guest';
             try {
-                console.log(`Querying token data row for active profile UUID: ${userId}`);
-                
-                const { data: profile, error } = await supabase
+                console.log(`Querying profile identity: ${userId}`);
+                const { data: profile, error } = await supabaseClient
                     .from('profiles')
                     .select('user_role')
                     .eq('id', userId)
@@ -237,11 +253,7 @@
                     return 'guest';
                 }
 
-                if (profile && profile.user_role) {
-                    return profile.user_role;
-                }
-                
-                return 'guest';
+                return (profile && profile.user_role) ? profile.user_role : 'guest';
             } catch (err) {
                 console.error("Critical structural resolution fault:", err);
                 return 'guest';
@@ -249,44 +261,50 @@
         }
 
         // 5. SUPABASE AUTH REAL-TIME STATE LISTENER
-        supabase.auth.onAuthStateChange(async (event, session) => {
-            console.log(`Global Authenticator Broadcast State Update: [${event}]`);
+        if (supabaseClient && supabaseClient.auth) {
+            supabaseClient.auth.onAuthStateChange(async (event, session) => {
+                console.log(`Global Authenticator Update Event: [${event}]`);
 
-            if (session && session.user) {
-                const evaluatedRole = await fetchUserRole(session.user.id);
-                console.log(`Security clearance passed. Executing navigation layout update for: ${evaluatedRole}`);
-                routeToPage(evaluatedRole, true);
-            } else {
-                console.log("No authorization token detected. Defaulting to public layout state.");
-                // FIXED: Changed first argument from 'guest' to 'public' to prevent landing on a pending screen
-                routeToPage('public', false);
-            }
-        });
+                if (session && session.user) {
+                    const evaluatedRole = await fetchUserRole(session.user.id);
+                    routeToPage(evaluatedRole, true);
+                } else {
+                    routeToPage('public', false);
+                }
+            });
+        } else {
+            // Safe fallback configuration if the database CDN loses connection block completely
+            console.warn("Operating inside secure sandbox baseline view state.");
+            setTimeout(() => routeToPage('public', false), 100);
+        }
 
         // 6. ACTION DISPATCH OPERATIONS
         async function handleSignIn() {
+            if (!supabaseClient) {
+                alert("Database operations engine is offline.");
+                return;
+            }
             const emailValue = document.getElementById('login-email').value;
             const passwordValue = document.getElementById('login-password').value;
 
-            console.log("Despatching credentials validation package to Supabase...");
-            const { error } = await supabase.auth.signInWithPassword({
+            const { error } = await supabaseClient.auth.signInWithPassword({
                 email: emailValue,
                 password: passwordValue
             });
 
-            if (error) {
-                alert(`Authentication Exception: ${error.message}`);
-            }
+            if (error) alert(`Authentication Exception: ${error.message}`);
         }
 
         async function handleSignOut() {
-            console.log("Disconnecting active authentication tokens...");
-            const { error } = await supabase.auth.signOut();
+            if (!supabaseClient) return;
+            const { error } = await supabaseClient.auth.signOut();
             if (error) console.error("Session cleanup exception:", error.message);
         }
 
         // Execution runtime hook
-        window.addEventListener('DOMContentLoaded', applySeasonalTheme);
+        window.addEventListener('DOMContentLoaded', () => {
+            applySeasonalTheme();
+        });
     </script>
 </body>
 </html>
