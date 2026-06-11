@@ -4,15 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Greater Harvest AME Zion Church</title>
+    <!-- Production-stable Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Supabase JS Client Ecosystem (v2 Library) -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body class="bg-gray-50 text-gray-900 font-sans antialiased transition-colors duration-500">
 
+    <!-- TICKER BANNER (Dynamic Scripture text updated by script) -->
     <div id="scripture-banner" class="text-center text-xs font-bold uppercase tracking-widest py-2 text-white shadow-inner bg-red-800">
         Loading Word...
     </div>
 
+    <!-- HEADER / NAVIGATION -->
     <header id="main-header" class="p-4 shadow-md flex justify-between items-center sticky top-0 z-50 border-b-4 bg-red-800 border-amber-500">
         <div class="flex items-center gap-3">
             <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-inner text-xl">
@@ -21,19 +25,24 @@
             <div class="font-black text-xl tracking-wide uppercase text-white">Greater Harvest AME Zion</div>
         </div>
         <div class="flex items-center gap-3">
+            <!-- Gold Pastor Action Button: Appears ONLY when user_role === 'pastor' -->
             <button id="pastor-view-btn" class="bg-amber-400 text-blue-950 font-black px-4 py-2 rounded shadow-md hover:bg-amber-300 transition-all text-xs uppercase tracking-wider" style="display: none;">
                 🌟 Pastor View Enabled
             </button>
+            <!-- Global Sign Out Action Button -->
             <button id="logout-nav-btn" onclick="handleSignOut()" class="border border-white/40 px-3 py-1.5 rounded hover:bg-white/10 text-xs font-semibold uppercase tracking-wider text-white transition-all" style="display: none;">
                 Sign Out
             </button>
         </div>
     </header>
 
+    <!-- MAIN INTERACTIVE CONTAINER -->
     <main class="max-w-5xl mx-auto my-8 px-4">
 
+        <!-- ============== PORTAL 1: PUBLIC LANDING PAGE ============== -->
         <div id="home-page" class="view-panel space-y-8">
             
+            <!-- Hero Video Section -->
             <div id="hero-card" class="bg-black rounded-xl overflow-hidden shadow-2xl border-4 relative aspect-video max-w-4xl mx-auto border-amber-500">
                 <div class="absolute inset-0 flex flex-col justify-between p-6 bg-gradient-to-t from-black/80 via-transparent to-black/40 text-white z-10">
                     <div>
@@ -49,6 +58,7 @@
                 </div>
             </div>
 
+            <!-- Double Navigation Core Interaction Cards -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
                 <div class="bg-gradient-to-br from-red-800 to-red-950 text-white p-6 rounded-xl shadow-xl flex flex-col justify-between min-h-[160px] border-b-4 border-amber-500">
                     <div>
@@ -67,6 +77,7 @@
                 </div>
             </div>
 
+            <!-- Shared Inline Interactive Form Module -->
             <div class="bg-white p-8 rounded-xl shadow-xl border border-gray-100 max-w-sm mx-auto mt-12">
                 <div class="text-center mb-6">
                     <h3 class="text-xl font-black text-gray-800 tracking-tight">Member Portal Entry</h3>
@@ -88,6 +99,7 @@
             </div>
         </div>
 
+        <!-- ============== PORTAL 2: PASTOR DASHBOARD ============== -->
         <div id="pastor-dashboard" class="view-panel bg-white p-8 rounded-xl shadow-xl border-t-4 border-amber-400 space-y-6" style="display: none;">
             <div class="border-b pb-4">
                 <span class="text-xs uppercase tracking-widest font-black px-2.5 py-1 bg-amber-100 text-amber-800 rounded-full">Administrative Executive View</span>
@@ -106,16 +118,19 @@
             </div>
         </div>
 
+        <!-- ============== PORTAL 3: SANCTUARY PORTAL (local_member) ============== -->
         <div id="sanctuary-portal" class="view-panel bg-white p-8 rounded-xl shadow-xl border-t-4 border-red-800 space-y-4" style="display: none;">
             <h1 class="text-3xl font-black text-red-900">Sanctuary Member Portal</h1>
             <p class="text-gray-600">Welcome to your local home panel. This directory hosts exclusive schedules, local meeting data, and announcements for the congregation meeting on-site in Wilson.</p>
         </div>
 
+        <!-- ============== PORTAL 4: VINEYARD PORTAL (online_member) ============== -->
         <div id="vineyard-portal" class="view-panel bg-white p-8 rounded-xl shadow-xl border-t-4 border-emerald-600 space-y-4" style="display: none;">
             <h1 class="text-3xl font-black text-emerald-900">The Vineyard Portal</h1>
             <p class="text-gray-600">Welcome to your digital portal panel. This platform serves streaming media bundles, global networking groups, and virtual study resources for our online family campus.</p>
         </div>
 
+        <!-- ============== PORTAL 5: PENDING SCREEN GATE (guest) ============== -->
         <div id="pending-page" class="view-panel bg-amber-50 border border-amber-200 p-8 rounded-xl text-center max-w-md mx-auto space-y-3" style="display: none;">
             <div class="text-4xl">⏳</div>
             <h1 class="text-xl font-bold text-amber-900">Account Access Pending</h1>
@@ -124,34 +139,31 @@
 
     </main>
 
+    <!-- FOOTER ARCHITECTURE -->
     <footer class="text-center py-12 text-xs border-t border-gray-200 mt-16 space-y-1">
         <p class="text-gray-400">Dignified Operations Ecosystem Matrix</p>
         <p class="font-bold text-gray-700 italic">Rev. Michael P. Matthews, Sr.</p>
         <p class="text-gray-400">Greater Harvest AME Zion Church • Wilson, NC</p>
     </footer>
 
+    <!-- LOGIC CORE INJECTION -->
     <script>
-        // 1. SUPABASE DATABASE INITIALIZATION SETUP (Renamed to avoid variable name collision conflict)
         const SUPABASE_URL = "https://amkfdqsrtawqjyryhjqn.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_SnnvEXHJarBR1JgH5ObIpg_12x921vc"; 
         
         let supabaseClient;
         try {
-            // Using global window reference to confidently initialize without compiler crashes
             if (window.supabase && typeof window.supabase.createClient === 'function') {
                 supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-            } else {
-                console.error("Supabase script libraries failed to initialize from CDN.");
             }
         } catch (initError) {
-            console.error("Initialization exception safely caught:", initError.message);
+            console.error("Initialization exception:", initError.message);
         }
 
-        // 2. SEASONAL SCHEME LOGIC ROTATOR
+        // Seasonal theme loader
         function applySeasonalTheme() {
             try {
                 const currentMonth = new Date().getMonth(); 
-                
                 let config = {
                     bg: "bg-amber-500", border: "border-amber-400", button: "bg-amber-600", text: "text-amber-500",
                     scripture: "Psalm 148:3 — 'Praise him, sun and moon: praise him, all ye stars of light.'",
@@ -183,27 +195,19 @@
                     banner.className = `text-center text-xs font-bold uppercase tracking-widest py-2 text-white shadow-inner ${config.bg}`;
                     banner.innerText = config.scripture;
                 }
-
                 const header = document.getElementById('main-header');
                 if (header) header.className = `p-4 shadow-md flex justify-between items-center sticky top-0 z-50 border-b-4 bg-red-800 ${config.border}`;
-                
                 const heroCard = document.getElementById('hero-card');
                 if (heroCard) heroCard.className = `bg-black rounded-xl overflow-hidden shadow-2xl border-4 relative aspect-video max-w-4xl mx-auto ${config.border}`;
-                
                 const submitBtn = document.getElementById('submit-btn');
                 if (submitBtn) submitBtn.className = `w-full text-white font-bold py-2.5 rounded text-xs uppercase tracking-widest shadow hover:opacity-90 transition-opacity ${config.button}`;
-
                 const titleElement = document.getElementById('hero-sermon-title');
                 if (titleElement) titleElement.innerText = config.sermon;
-            } catch (themeError) {
-                console.error("Theme assignment exception handled seamlessly:", themeError);
-            }
+            } catch (e) {}
         }
 
-        // 3. REACTIVE VANILLA CLIENT-SIDE WEB ROUTER
+        // Web Router
         function routeToPage(role, isAuthenticated) {
-            console.log(`Routing view panels. Target role: [${role}], Authenticated Status: [${isAuthenticated}]`);
-            
             const panels = document.querySelectorAll('.view-panel');
             panels.forEach(p => p.style.display = 'none');
 
@@ -213,10 +217,8 @@
             if (pastorBtn) pastorBtn.style.display = (role === 'pastor') ? 'block' : 'none';
             if (logoutBtn) logoutBtn.style.display = isAuthenticated ? 'block' : 'none';
 
-            // Safe Public Isolation Boundary
             if (!isAuthenticated) {
-                const home = document.getElementById('home-page');
-                if (home) home.style.display = 'block';
+                document.getElementById('home-page').style.display = 'block';
                 return;
             }
 
@@ -237,34 +239,26 @@
             }
         }
 
-        // 4. ROLE RESOLVER INTEGRATION
+        // FETCH USER ROLE (FIXED: Now queries 'role' column instead of 'user_role')
         async function fetchUserRole(userId) {
             if (!supabaseClient) return 'guest';
             try {
-                console.log(`Querying profile identity: ${userId}`);
                 const { data: profile, error } = await supabaseClient
                     .from('profiles')
-                    .select('user_role')
+                    .select('role') // <-- Updated from 'user_role' to match your database column header
                     .eq('id', userId)
                     .single();
 
-                if (error) {
-                    console.error("Database connection block or RLS policy denial caught:", error.message);
-                    return 'guest';
-                }
-
-                return (profile && profile.user_role) ? profile.user_role : 'guest';
+                if (error) return 'guest';
+                return (profile && profile.role) ? profile.role : 'guest';
             } catch (err) {
-                console.error("Critical structural resolution fault:", err);
                 return 'guest';
             }
         }
 
-        // 5. SUPABASE AUTH REAL-TIME STATE LISTENER
+        // Auth listener initialization
         if (supabaseClient && supabaseClient.auth) {
             supabaseClient.auth.onAuthStateChange(async (event, session) => {
-                console.log(`Global Authenticator Update Event: [${event}]`);
-
                 if (session && session.user) {
                     const evaluatedRole = await fetchUserRole(session.user.id);
                     routeToPage(evaluatedRole, true);
@@ -273,35 +267,25 @@
                 }
             });
         } else {
-            // Safe fallback configuration if the database CDN loses connection block completely
-            console.warn("Operating inside secure sandbox baseline view state.");
             setTimeout(() => routeToPage('public', false), 100);
         }
 
-        // 6. ACTION DISPATCH OPERATIONS
         async function handleSignIn() {
-            if (!supabaseClient) {
-                alert("Database operations engine is offline.");
-                return;
-            }
+            if (!supabaseClient) return;
             const emailValue = document.getElementById('login-email').value;
             const passwordValue = document.getElementById('login-password').value;
-
             const { error } = await supabaseClient.auth.signInWithPassword({
                 email: emailValue,
                 password: passwordValue
             });
-
             if (error) alert(`Authentication Exception: ${error.message}`);
         }
 
         async function handleSignOut() {
             if (!supabaseClient) return;
-            const { error } = await supabaseClient.auth.signOut();
-            if (error) console.error("Session cleanup exception:", error.message);
+            await supabaseClient.auth.signOut();
         }
 
-        // Execution runtime hook
         window.addEventListener('DOMContentLoaded', () => {
             applySeasonalTheme();
         });
