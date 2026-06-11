@@ -7,137 +7,238 @@
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body class="bg-gray-50 text-gray-900 font-sans antialiased">
+<body class="bg-gray-50 text-gray-900 font-sans antialiased transition-colors duration-500">
 
-    <header class="bg-blue-900 text-white p-4 shadow-md flex justify-between items-center">
-        <div class="font-bold text-xl tracking-wide">Greater Harvest AME Zion</div>
-        <div class="flex items-center gap-4">
-            <button id="pastor-view-btn" class="bg-amber-400 text-blue-950 font-bold px-4 py-2 rounded shadow hover:bg-amber-300 transition-all" style="display: none;">
+    <div id="scripture-banner" class="text-center text-xs font-bold uppercase tracking-widest py-2 text-white shadow-inner">
+        Loading Word...
+    </div>
+
+    <header id="main-header" class="p-4 shadow-md flex justify-between items-center sticky top-0 z-50 border-b-4">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-inner text-xl">
+                ⛪
+            </div>
+            <div class="font-black text-xl tracking-wide uppercase text-white">Greater Harvest AME Zion</div>
+        </div>
+        <div class="flex items-center gap-3">
+            <button id="pastor-view-btn" class="bg-amber-400 text-blue-950 font-black px-4 py-2 rounded shadow-md hover:bg-amber-300 transition-all text-xs uppercase tracking-wider" style="display: none;">
                 🌟 Pastor View Enabled
             </button>
-            <button id="logout-nav-btn" onclick="handleSignOut()" class="border border-white/40 px-3 py-1.5 rounded hover:bg-white/10 text-sm transition-all" style="display: none;">
+            <button id="logout-nav-btn" onclick="handleSignOut()" class="border border-white/40 px-3 py-1.5 rounded hover:bg-white/10 text-xs font-semibold uppercase tracking-wider text-white transition-all" style="display: none;">
                 Sign Out
             </button>
         </div>
     </header>
 
-    <main class="max-w-4xl mx-auto my-8 px-4">
+    <main class="max-w-5xl mx-auto my-8 px-4">
 
-        <div id="home-page" class="view-panel space-y-6 text-center py-12">
-            <h1 class="text-4xl font-extrabold text-blue-900">Welcome to Greater Harvest</h1>
-            <p class="text-gray-600 max-w-md mx-auto">Welcome to our church community hub in Wilson, NC. Sign in to enter your member portal.</p>
+        <div id="home-page" class="view-panel space-y-8" style="display: none;">
             
-            <div class="bg-white p-6 rounded-xl shadow-md border border-gray-100 max-w-sm mx-auto text-left mt-8">
-                <h3 class="text-lg font-bold mb-4 text-gray-800">Account Sign In</h3>
+            <div class="bg-black rounded-xl overflow-hidden shadow-2xl border-4 id-seasonal-border relative aspect-video max-w-4xl mx-auto">
+                <div class="absolute inset-0 flex flex-col justify-between p-6 bg-gradient-to-t from-black/80 via-transparent to-black/40 text-white z-10">
+                    <div>
+                        <span class="text-xs font-bold uppercase bg-white/20 px-2 py-1 rounded tracking-widest backdrop-blur-sm">Live Broadcast</span>
+                        <h2 id="hero-sermon-title" class="text-2xl md:text-4xl font-black mt-2 drop-shadow">Loading Seasonal Word...</h2>
+                    </div>
+                    
+                    <div class="flex items-center justify-between border-t border-white/20 pt-4 backdrop-blur-xs">
+                        <button class="bg-white text-gray-900 rounded-full w-12 h-12 flex items-center justify-center font-bold text-xl hover:scale-105 transition-transform">▶</button>
+                        <div class="text-xs font-mono tracking-wider bg-black/40 px-3 py-1 rounded">Sunday Worship Service • 11:00 AM</div>
+                        <div class="flex gap-3 text-lg opacity-80"><span>🔊</span><span>⛶</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+                <div class="bg-gradient-to-br from-red-800 to-red-950 text-white p-6 rounded-xl shadow-xl flex flex-col justify-between min-h-[160px] border-b-4 border-amber-500">
+                    <div>
+                        <h3 class="text-xl font-black tracking-wide uppercase">Join Us This Sunday</h3>
+                        <p class="text-sm opacity-80 mt-1">Experience physical fellowship and sanctuary worship live with our church family in Wilson, NC.</p>
+                    </div>
+                    <div class="text-xs font-bold uppercase tracking-wider mt-4 bg-white/10 self-start px-3 py-1 rounded">📍 501 Ward Blvd, Wilson, NC</div>
+                </div>
+
+                <div class="bg-gradient-to-br from-amber-500 to-amber-700 text-white p-6 rounded-xl shadow-xl flex flex-col justify-between min-h-[160px] border-b-4 border-amber-900">
+                    <div>
+                        <h3 class="text-xl font-black tracking-wide uppercase">Explore Global Ministries</h3>
+                        <p class="text-sm opacity-80 mt-1">Connect with our digital campus outreach programs, global bible studies, and online remote fellowship cells.</p>
+                    </div>
+                    <div class="text-xs font-bold uppercase tracking-wider mt-4 bg-black/20 self-start px-3 py-1 rounded">🌐 Virtual Vineyards Campus</div>
+                </div>
+            </div>
+
+            <div class="bg-white p-8 rounded-xl shadow-xl border border-gray-100 max-w-sm mx-auto mt-12">
+                <div class="text-center mb-6">
+                    <h3 class="text-xl font-black text-gray-800 tracking-tight">Member Portal Entry</h3>
+                    <p class="text-xs text-gray-500 mt-1">Access your personalized congregational dashboard</p>
+                </div>
                 <form onsubmit="event.preventDefault(); handleSignIn();" class="space-y-4">
                     <div>
-                        <label class="block text-xs font-semibold uppercase text-gray-500 mb-1">Email Address</label>
-                        <input id="login-email" type="email" required class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-blue-500" placeholder="pastor@example.com">
+                        <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">Email Address</label>
+                        <input id="login-email" type="email" required class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-red-700 focus:outline-none" placeholder="mpnmatthews@gmail.com">
                     </div>
                     <div>
-                        <label class="block text-xs font-semibold uppercase text-gray-500 mb-1">Password</label>
-                        <input id="login-password" type="password" required class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-blue-500" placeholder="••••••••">
+                        <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-1">Password</label>
+                        <input id="login-password" type="password" required class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-red-700 focus:outline-none" placeholder="••••••••">
                     </div>
-                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded text-sm transition-colors">
+                    <button type="submit" class="w-full text-white font-bold py-2.5 rounded text-xs uppercase tracking-widest shadow hover:opacity-90 transition-opacity id-seasonal-submit-btn">
                         Sign In
                     </button>
                 </form>
             </div>
         </div>
 
-        <div id="pastor-dashboard" class="view-panel bg-white p-8 rounded-xl shadow-md border-t-4 border-amber-400" style="display: none;">
-            <div class="border-b pb-4 mb-4">
-                <span class="text-xs uppercase tracking-wider font-extrabold px-2.5 py-1 bg-amber-100 text-amber-800 rounded-full">Administrative Portal</span>
-                <h1 class="text-3xl font-black text-gray-900 mt-2">Pastor Dashboard</h1>
+        <div id="pastor-dashboard" class="view-panel bg-white p-8 rounded-xl shadow-xl border-t-4 border-amber-400 space-y-6" style="display: none;">
+            <div class="border-b pb-4">
+                <span class="text-xs uppercase tracking-widest font-black px-2.5 py-1 bg-amber-100 text-amber-800 rounded-full">Administrative Executive View</span>
+                <h1 class="text-4xl font-black text-gray-900 mt-2">Pastor Dashboard</h1>
             </div>
-            <p class="text-gray-600 mb-6">Welcome back, Pastor. Here you can oversee local church ministries, review updates, and manage roles.</p>
+            <p class="text-gray-600">Welcome back, Pastor. Below are your administrative management options for the localized church body and online vineyard structures.</p>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="border p-4 rounded bg-gray-50"><h3 class="font-bold text-blue-900">Local Sanctuary Roster</h3><p class="text-xs text-gray-500">Manage church members assigned to Wilson, NC.</p></div>
-                <div class="border p-4 rounded bg-gray-50"><h3 class="font-bold text-blue-900">Vineyard Analytics</h3><p class="text-xs text-gray-500">Review system activity records for online users.</p></div>
+                <div class="border p-4 rounded bg-gray-50 border-l-4 border-red-700">
+                    <h3 class="font-bold text-red-950 text-lg">Sanctuary Administration</h3>
+                    <p class="text-xs text-gray-500 mt-1">Oversee physical rosters and stewardship lists for the Wilson campus congregation.</p>
+                </div>
+                <div class="border p-4 rounded bg-gray-50 border-l-4 border-amber-500">
+                    <h3 class="font-bold text-amber-950 text-lg">Vineyard Operations</h3>
+                    <p class="text-xs text-gray-500 mt-1">Review analytical data streams and outreach files for online digital members.</p>
+                </div>
             </div>
         </div>
 
-        <div id="sanctuary-portal" class="view-panel bg-white p-8 rounded-xl shadow-md border-t-4 border-blue-600" style="display: none;">
-            <h1 class="text-2xl font-bold text-blue-900 mb-2">Sanctuary Member Portal</h1>
-            <p class="text-gray-600">Exclusive view containing community notifications, events, and resources for our localized physical congregation in Wilson.</p>
+        <div id="sanctuary-portal" class="view-panel bg-white p-8 rounded-xl shadow-xl border-t-4 border-red-800 space-y-4" style="display: none;">
+            <h1 class="text-3xl font-black text-red-900">Sanctuary Member Portal</h1>
+            <p class="text-gray-600">Welcome to your local home panel. This directory hosts exclusive schedules, local meeting data, and announcements for the congregation meeting on-site in Wilson.</p>
         </div>
 
-        <div id="vineyard-portal" class="view-panel bg-white p-8 rounded-xl shadow-md border-t-4 border-emerald-600" style="display: none;">
-            <h1 class="text-2xl font-bold text-emerald-900 mb-2">The Vineyard Online Portal</h1>
-            <p class="text-gray-600">Streaming archives, digital fellowship rooms, and tailored global updates for our remote internet campus members.</p>
+        <div id="vineyard-portal" class="view-panel bg-white p-8 rounded-xl shadow-xl border-t-4 border-emerald-600 space-y-4" style="display: none;">
+            <h1 class="text-3xl font-black text-emerald-900">The Vineyard Portal</h1>
+            <p class="text-gray-600">Welcome to your digital portal panel. This platform serves streaming media bundles, global networking groups, and virtual study resources for our online family campus.</p>
         </div>
 
-        <div id="pending-page" class="view-panel bg-amber-50 border border-amber-200 p-8 rounded-xl text-center max-w-md mx-auto" style="display: none;">
-            <div class="text-4xl mb-2">⏳</div>
-            <h1 class="text-xl font-bold text-amber-900">Profile Verification Pending</h1>
-            <p class="text-sm text-amber-700 mt-2">Your registration was received successfully. An administrator is verifying your account assignment. You'll be granted automatic entry once your membership role is assigned.</p>
+        <div id="pending-page" class="view-panel bg-amber-50 border border-amber-200 p-8 rounded-xl text-center max-w-md mx-auto space-y-3" style="display: none;">
+            <div class="text-4xl">⏳</div>
+            <h1 class="text-xl font-bold text-amber-900">Account Access Pending</h1>
+            <p class="text-sm text-amber-700">Your profile registration was processed securely. A church system steward must verify your placement before directory privileges unlock. Thank you for your patience!</p>
         </div>
 
     </main>
 
+    <footer class="text-center py-12 text-xs border-t border-gray-200 mt-16 space-y-1">
+        <p class="text-gray-400">Dignified Operations Ecosystem Matrix</p>
+        <p class="font-bold text-gray-700 italic">Rev. Michael P. Matthews, Sr.</p>
+        <p class="text-gray-400">Greater Harvest AME Zion Church • Wilson, NC</p>
+    </footer>
+
     <script>
-        // 1. Database Infrastructure Setup
+        // 1. SUPABASE DATABASE INITIALIZATION SETUP
         const SUPABASE_URL = "https://amkfdqsrtawqjyryhjqn.supabase.co";
         const SUPABASE_ANON_KEY = "sb_publishable_SnnvEXHJarBR1JgH5ObIpg_12x921vc"; 
         const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // 2. Client Side Multi-Pass Dynamic Router
-        function routeToPage(role, isAuthenticated) {
-            console.log(`Executing UI routing adjustment for role: [${role}]`);
+        // 2. SEASONAL SCHEME LOGIC ROTATOR
+        function applySeasonalTheme() {
+            const currentMonth = new Date().getMonth(); // 0 = Jan, 5 = June, etc.
             
-            // Hide all components uniformly
-            const sections = document.querySelectorAll('.view-panel');
-            sections.forEach(panel => panel.style.display = 'none');
+            let config = {
+                bg: "bg-amber-500", border: "border-amber-400", button: "bg-amber-600",
+                scripture: "Psalm 148:3 — 'Praise him, sun and moon: praise him, all ye stars of light.'",
+                sermon: "Walking in the Gold: The Power of Summer Praise"
+            };
 
-            // Toggle top navigation utility panels
+            if (currentMonth >= 11 || currentMonth <= 1) { // Winter (Dec - Feb)
+                config = {
+                    bg: "bg-blue-900", border: "border-blue-700", button: "bg-blue-800",
+                    scripture: "Psalm 147:16 — 'He giveth snow like wool: he scattereth the hoarfrost like ashes.'",
+                    sermon: "Faith Through Deep Winters: Relying on His Sovereignty"
+                };
+            } else if (currentMonth >= 2 && currentMonth <= 4) { // Spring (Mar - May)
+                config = {
+                    bg: "bg-emerald-800", border: "border-emerald-600", button: "bg-emerald-700",
+                    scripture: "Song of Solomon 2:11-12 — 'For, lo, the winter is past, the rain is over and gone...'",
+                    sermon: "The Seed in Fertile Ground: New Seasons of Resurrection Growth"
+                };
+            } else if (currentMonth >= 8 && currentMonth <= 10) { // Autumn (Sep - Nov)
+                config = {
+                    bg: "bg-orange-700", border: "border-orange-600", button: "bg-orange-800",
+                    scripture: "Proverbs 3:5 — 'Trust in the Lord with all thine heart; and lean not unto thine own understanding.'",
+                    sermon: "The Season of Harvest: Reaping What Was Faithfully Sown"
+                };
+            }
+
+            // Apply configurations to structural DOM tokens
+            document.getElementById('scripture-banner').className = `text-center text-xs font-bold uppercase tracking-widest py-2 text-white shadow-inner ${config.bg}`;
+            document.getElementById('main-header').className = `p-4 shadow-md flex justify-between items-center sticky top-0 z-50 border-b-4 bg-red-800 ${config.border}`;
+            
+            const seasonalBorders = document.querySelectorAll('.id-seasonal-border');
+            seasonalBorders.forEach(el => el.style.borderColor = getComputedColor(config.border));
+            
+            const submitBtn = document.querySelector('.id-seasonal-submit-btn');
+            if (submitBtn) submitBtn.className = `w-full text-white font-bold py-2.5 rounded text-xs uppercase tracking-widest shadow hover:opacity-90 transition-opacity ${config.button}`;
+
+            document.getElementById('scripture-banner').innerText = config.scripture;
+            document.getElementById('hero-sermon-title').innerText = config.sermon;
+        }
+
+        function getComputedColor(twClass) {
+            if (twClass.includes('amber')) return '#fbbf24';
+            if (twClass.includes('blue')) return '#1d4ed8';
+            if (twClass.includes('emerald')) return '#059669';
+            if (twClass.includes('orange')) return '#ea580c';
+            return 'gold';
+        }
+
+        // 3. REACTIVE VANILLA CLIENT-SIDE WEB ROUTER
+        function routeToPage(role, isAuthenticated) {
+            console.log(`Routing layout visibility matrices to targeted profile view: [${role}]`);
+            
+            // Toggle uniform interface states
+            const panels = document.querySelectorAll('.view-panel');
+            panels.forEach(p => p.style.display = 'none');
+
             const pastorBtn = document.getElementById('pastor-view-btn');
             const logoutBtn = document.getElementById('logout-nav-btn');
             
             if (pastorBtn) pastorBtn.style.display = (role === 'pastor') ? 'block' : 'none';
             if (logoutBtn) logoutBtn.style.display = isAuthenticated ? 'block' : 'none';
 
-            // Unauthenticated users are strictly bound to Home
+            // Base Isolation Case: Force Unauthenticated states strictly onto public home layout
             if (!isAuthenticated) {
-                showElement('home-page');
+                document.getElementById('home-page').style.display = 'block';
                 return;
             }
 
-            // Role mapping switch
+            // Map values targeting the true database enum column: public.profiles.user_role
             switch (role) {
                 case 'pastor':
-                    showElement('pastor-dashboard');
+                    document.getElementById('pastor-dashboard').style.display = 'block';
                     break;
                 case 'local_member':
-                    showElement('sanctuary-portal');
+                    document.getElementById('sanctuary-portal').style.display = 'block';
                     break;
                 case 'online_member':
-                    showElement('vineyard-portal');
+                    document.getElementById('vineyard-portal').style.display = 'block';
                     break;
                 case 'guest':
                 default:
-                    showElement('pending-page');
+                    document.getElementById('pending-page').style.display = 'block';
                     break;
             }
         }
 
-        function showElement(id) {
-            const el = document.getElementById(id);
-            if (el) el.style.display = 'block';
-        }
-
-        // 3. Secured Async Identity Resolver (Clears JWT/RLS Cache Window)
+        // 4. ROLE RESOLVER INTEGRATION (Fixed to target 'user_role' instead of 'role')
         async function fetchUserRole(userId) {
             try {
-                console.log("Requesting role verification for UUID token:", userId);
+                console.log(`Querying token data row for active profile UUID: ${userId}`);
                 
                 const { data: profile, error } = await supabase
                     .from('profiles')
-                    .select('user_role')
+                    .select('user_role') // Matches your actual database column structure!
                     .eq('id', userId)
                     .single();
 
                 if (error) {
-                    console.error("Database resolution failed. Profile lookup fallback applied:", error.message);
+                    console.error("Database connection block or RLS policy denial caught:", error.message);
                     return 'guest';
                 }
 
@@ -147,44 +248,51 @@
                 
                 return 'guest';
             } catch (err) {
-                console.error("System structural routing conflict caught:", err);
+                console.error("Critical structural resolution fault:", err);
                 return 'guest';
             }
         }
 
-        // 4. Reactive State Change Gateway (Core fix for the pastor's login loop)
+        // 5. SUPABASE AUTH REAL-TIME STATE LISTENER
         supabase.auth.onAuthStateChange(async (event, session) => {
-            console.log(`Global Authenticator Broadcast Event: [${event}]`);
+            console.log(`Global Authenticator Broadcast State Update: [${event}]`);
 
             if (session && session.user) {
-                // Network pipeline has completed binding user JWT headers
-                const dynamicRole = await fetchUserRole(session.user.id);
-                console.log(`Identity verification successful. System assigned role matching database: ${dynamicRole}`);
-                routeToPage(dynamicRole, true);
+                // Session is bound cleanly. Retrieve user role reactively.
+                const evaluatedRole = await fetchUserRole(session.user.id);
+                console.log(`Security clearance passed. Executing navigation layout update for: ${evaluatedRole}`);
+                routeToPage(evaluatedRole, true);
             } else {
-                // Explicit initialization fallback for unauthenticated connections
-                console.log("No authenticated credentials detected. Resetting to public home.");
+                console.log("No authorization token detected. Defaulting to public layout state.");
                 routeToPage('guest', false);
             }
         });
 
-        // 5. Trigger Actions
+        // 6. ACTION DISPATCH OPERATIONS
         async function handleSignIn() {
-            const emailInput = document.getElementById('login-email').value;
-            const passwordInput = document.getElementById('login-password').value;
+            const emailValue = document.getElementById('login-email').value;
+            const passwordValue = document.getElementById('login-password').value;
 
-            console.log("Processing sign-in request...");
+            console.log("Despatching credentials validation package to Supabase...");
             const { error } = await supabase.auth.signInWithPassword({
-                email: emailInput,
-                password: passwordInput
+                email: emailValue,
+                password: passwordValue
             });
 
             if (error) {
                 alert(`Authentication Exception: ${error.message}`);
             }
-            // Logic avoids manually routing here; the reactive onAuthStateChange handler performs the layout shift automatically
+            // onAuthStateChange automatically intercepts successful logins and handles structural shifting
         }
 
         async function handleSignOut() {
-            console.log("Processing account sign out...");
-            const { error } = await supabase.auth
+            console.log("Disconnecting active authentication tokens...");
+            const { error } = await supabase.auth.signOut();
+            if (error) console.error("Session cleanup exception:", error.message);
+        }
+
+        // Execution runtime hook
+        window.addEventListener('DOMContentLoaded', applySeasonalTheme);
+    </script>
+</body>
+</html>
